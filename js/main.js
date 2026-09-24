@@ -1,3 +1,5 @@
+/* SBMP Academic Hub · Om Sherlekar (B053) · CSE-B · (c) 2026 */
+
 import { renderLayout } from './layout.js';
 import { initTheme } from './theme.js';
 import { initClock } from './clock.js';
@@ -25,7 +27,7 @@ function initSubjectsPreview(){
     return `<a class="subject-card" href="subjects/${s.slug}.html" style="--subject-color:${color};">
       <div class="code">${s.code}</div>
       <h3>${s.name}</h3>
-      <div class="meta"><span>${s.category}</span><span>·</span><span>${s.units.length} Units</span></div>
+      <div class="meta"><span>${s.category}</span><span>&middot;</span><span>${s.units.length} Units</span></div>
     </a>`;
   }).join('');
 }
