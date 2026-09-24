@@ -23,7 +23,7 @@ function renderControls(){
       <button class="tt-tab" data-batch="S2">Batch S2</button>
     </div>
     <button class="btn btn-secondary btn-sm" onclick="window.print()" style="margin-left:auto;">Print</button>
-    <div class="badge badge-primary">AY 2026&ndash;27 · Effective 10.08.2026</div>`;
+    <div class="badge badge-primary">AY 2026-27 · Effective 10.08.2026</div>`;
 }
 
 function currentSlot(){
@@ -45,7 +45,6 @@ function currentSlot(){
   return null;
 }
 
-// Convert both formats to a uniform array for easy lookup
 function getEntries(day, slot){
   const c = TIMETABLE_DIV_B[day][slot];
   if (!c) return [{type:'FREE'}];
@@ -53,48 +52,60 @@ function getEntries(day, slot){
   return [c];
 }
 
-// Find a lab entry for a specific batch at this day/slot
-function findLabEntry(day, slot, batch){
-  const entries = getEntries(day, slot);
-  return entries.find(e => e.type==='CLASS' && e.mode==='LL' && e.batch===batch) || null;
-}
-
-// Find any non-lab (regular) entry for a batch, or an ALL entry
-function findRegularEntry(day, slot, batch){
-  const entries = getEntries(day, slot);
-  return entries.find(e => e.type==='CLASS' && e.mode!=='LL' && (e.batch==='ALL' || e.batch===batch)) || null;
-}
-
-// Special cell types (RECESS, LIBRARY, FREE)
-function getSpecial(day, slot){
-  const c = TIMETABLE_DIV_B[day][slot];
-  if (!c) return null;
-  if (Array.isArray(c)) return null;
-  if (c.type==='RECESS' || c.type==='LIBRARY') return c;
-  return null;
-}
-
-// Is this slot the FIRST hour of a 2-hour lab?
-function isLabStart(day, slot){
-  const idx = TIME_SLOTS.indexOf(slot);
-  if (idx === TIME_SLOTS.length-1) return false;
-  const next = TIME_SLOTS[idx+1];
-  const curLabs = getEntries(day, slot).filter(e=>e.type==='CLASS'&&e.mode==='LL');
-  const nextLabs = getEntries(day, next).filter(e=>e.type==='CLASS'&&e.mode==='LL');
-  if (!curLabs.length || !nextLabs.length) return false;
-  // At least one lab continues into next slot
-  return curLabs.some(c => nextLabs.some(n => n.batch === c.batch));
-}
-
-// Is this slot the SECOND hour of a 2-hour lab?
-function isLabContinuation(day, slot){
+// Returns true if the SAME lab entry exists in both this slot and the previous slot.
+// "Same lab" means same code AND same batch.
+function isLabContinuationOfPrevious(day, slot, batchFilter){
   const idx = TIME_SLOTS.indexOf(slot);
   if (idx === 0) return false;
-  const prev = TIME_SLOTS[idx-1];
-  const curLabs = getEntries(day, slot).filter(e=>e.type==='CLASS'&&e.mode==='LL');
-  const prevLabs = getEntries(day, prev).filter(e=>e.type==='CLASS'&&e.mode==='LL');
+  const prevSlot = TIME_SLOTS[idx-1];
+
+  const curEntries  = getEntries(day, slot);
+  const prevEntries = getEntries(day, prevSlot);
+
+  // All lab entries in current slot that are labs
+  const curLabs = curEntries.filter(e => e.type==='CLASS' && e.mode==='LL');
+  const prevLabs = prevEntries.filter(e => e.type==='CLASS' && e.mode==='LL');
+
   if (!curLabs.length || !prevLabs.length) return false;
-  return curLabs.some(c => prevLabs.some(p => p.batch === c.batch));
+
+  // Which labs do we care about in this cell?
+  const relevant = (batchFilter === 'ALL')
+    ? curLabs
+    : curLabs.filter(l => l.batch === batchFilter);
+
+  if (!relevant.length) return false;
+
+  // We consider this slot covered IF every relevant lab also existed in the previous slot
+  // (same code + same batch) — i.e., it's the 2nd hour of the same lab.
+  return relevant.every(lab =>
+    prevLabs.some(p => p.code === lab.code && p.batch === lab.batch)
+  );
+}
+
+// Does the current slot have a lab that starts a NEW 2-hour block?
+function isLabStart(day, slot, batchFilter){
+  const idx = TIME_SLOTS.indexOf(slot);
+  if (idx === TIME_SLOTS.length-1) return false;
+  const nextSlot = TIME_SLOTS[idx+1];
+
+  const curEntries  = getEntries(day, slot);
+  const nextEntries = getEntries(day, nextSlot);
+
+  const curLabs  = curEntries.filter(e => e.type==='CLASS' && e.mode==='LL');
+  const nextLabs = nextEntries.filter(e => e.type==='CLASS' && e.mode==='LL');
+
+  if (!curLabs.length || !nextLabs.length) return false;
+
+  const relevant = (batchFilter === 'ALL')
+    ? curLabs
+    : curLabs.filter(l => l.batch === batchFilter);
+
+  if (!relevant.length) return false;
+
+  // It's a start if at least one relevant lab also appears in the NEXT slot with same code+batch
+  return relevant.some(lab =>
+    nextLabs.some(n => n.code === lab.code && n.batch === lab.batch)
+  );
 }
 
 function renderGrid(){
@@ -114,23 +125,9 @@ function renderGrid(){
     for (const day of DAYS){
       const isNow = cur && day===cur.day && slot===cur.label;
 
-      // Was this cell already covered by rowspan=2 from the previous row?
-      if (isLabContinuation(day, slot)){
-        const curLabs = getEntries(day, slot).filter(e=>e.type==='CLASS'&&e.mode==='LL');
-        const prevLabs = getEntries(day, TIME_SLOTS[i-1]).filter(e=>e.type==='CLASS'&&e.mode==='LL');
-
-        // Which labs were rendered in the previous row? Skip them
-        const alreadyShown = curLabs.some(c => prevLabs.some(p => p.batch === c.batch));
-        if (alreadyShown){
-          // In ALL view, skip only if the cell was fully rendered (both labs covered)
-          if (activeBatch==='ALL'){
-            const allCovered = curLabs.every(c => prevLabs.some(p => p.batch === c.batch));
-            if (allCovered) continue;
-          } else {
-            const myLab = curLabs.find(c => c.batch === activeBatch);
-            if (myLab && prevLabs.some(p => p.batch === activeBatch)) continue;
-          }
-        }
+      // Skip this cell entirely if the row above already rendered it via rowspan=2
+      if (isLabContinuationOfPrevious(day, slot, activeBatch)){
+        continue;
       }
 
       h += renderCell(day, slot, isNow);
@@ -142,18 +139,22 @@ function renderGrid(){
 }
 
 function renderCell(day, slot, isNow){
-  // Special cells (RECESS / LIBRARY)
-  const special = getSpecial(day, slot);
-  if (special && special.type==='RECESS') return '<td class="tt-td recess">RECESS</td>';
-  if (special && special.type==='LIBRARY') return '<td class="tt-td library">LIBRARY</td>';
-
-  const startLab = isLabStart(day, slot);
-  const rowspan = startLab ? ' rowspan="2"' : '';
   const nowCls = isNow ? ' now-cell' : '';
+  const entries = getEntries(day, slot);
 
-  // ---------- Filtered by batch ----------
+  // ---- RECESS / LIBRARY ----
+  const special = entries.find(e => e.type==='RECESS' || e.type==='LIBRARY');
+  if (special){
+    if (special.type==='RECESS') return `<td class="tt-td recess">RECESS</td>`;
+    if (special.type==='LIBRARY') return `<td class="tt-td library">LIBRARY</td>`;
+  }
+
+  // ---- FILTERED BY BATCH (S1 or S2) ----
   if (activeBatch==='S1' || activeBatch==='S2'){
-    const lab = findLabEntry(day, slot, activeBatch);
+    const isStart = isLabStart(day, slot, activeBatch);
+    const rowspan = isStart ? ' rowspan="2"' : '';
+
+    const lab = entries.find(e => e.type==='CLASS' && e.mode==='LL' && e.batch===activeBatch);
     if (lab){
       return `<td class="tt-td lab-cell${nowCls}"${rowspan}>
         <div class="code">${lab.code}</div>
@@ -161,7 +162,7 @@ function renderCell(day, slot, isNow){
         <div class="meta">${lab.faculty} · ${lab.room} · ${activeBatch}</div>
       </td>`;
     }
-    const reg = findRegularEntry(day, slot, activeBatch);
+    const reg = entries.find(e => e.type==='CLASS' && e.mode!=='LL' && (e.batch==='ALL' || e.batch===activeBatch));
     if (reg){
       const bt = reg.batch==='ALL' ? '' : `<span class="badge badge-primary" style="font-size:.62rem">${reg.batch}</span>`;
       return `<td class="tt-td${nowCls}">
@@ -173,15 +174,26 @@ function renderCell(day, slot, isNow){
     return '<td class="tt-td free">&mdash;</td>';
   }
 
-  // ---------- Full Division B ----------
-  const entries = getEntries(day, slot);
-  const labs = entries.filter(e=>e.type==='CLASS'&&e.mode==='LL');
-  const regs = entries.filter(e=>e.type==='CLASS'&&e.mode!=='LL');
+  // ---- FULL DIVISION B VIEW ----
+  const labs = entries.filter(e => e.type==='CLASS' && e.mode==='LL');
+  const regs = entries.filter(e => e.type==='CLASS' && e.mode!=='LL');
 
-  // Lab cell (may have 1 or 2 batches)
   if (labs.length){
+    // Rowspan applies if BOTH labs (S1 + S2) continue into next slot with same code+batch
+    const idx = TIME_SLOTS.indexOf(slot);
+    const nextSlot = TIME_SLOTS[idx+1];
+    const nextEntries = nextSlot ? getEntries(day, nextSlot) : [];
+    const nextLabs = nextEntries.filter(e => e.type==='CLASS' && e.mode==='LL');
+
+    // Does each lab in this cell continue into the next slot?
+    const allContinue = labs.every(lab =>
+      nextLabs.some(n => n.code === lab.code && n.batch === lab.batch)
+    );
+    const rowspan = allContinue ? ' rowspan="2"' : '';
+
     const s1 = labs.find(l => l.batch==='S1');
     const s2 = labs.find(l => l.batch==='S2');
+
     if (s1 && s2){
       return `<td class="tt-td lab-cell${nowCls}"${rowspan}>
         <div class="lab-block">
@@ -207,7 +219,6 @@ function renderCell(day, slot, isNow){
     </td>`;
   }
 
-  // Regular class
   if (regs.length){
     const r = regs[0];
     const bt = r.batch==='ALL' ? '' : `<span class="badge badge-primary" style="font-size:.62rem">${r.batch}</span>`;
