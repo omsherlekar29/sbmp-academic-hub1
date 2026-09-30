@@ -1,8 +1,8 @@
 /* SBMP Academic Hub · Om Sherlekar (B053) · CSE-B · (c) 2026 */
 
-const SVKM_LOGO='assets/logos/svkm-logo.jpg';
-const SBMP_LOGO='assets/logos/sbmp-logo.jpg';
-const OFFICIAL_URL='https://sbmp.ac.in/';
+const SVKM_LOGO = 'assets/logos/svkm-logo.jpg';
+const SBMP_LOGO = 'assets/logos/sbmp-logo.jpg';
+const OFFICIAL_URL = 'https://sbmp.ac.in/';
 
 export function renderLayout(){
   injectHeader();
@@ -10,19 +10,18 @@ export function renderLayout(){
   setupMobileMenu();
   setActiveNav();
   injectWatermark();
-  injectAntiCopy();
 }
 
 function rp(){
-  const p=window.location.pathname;
-  if(p.includes('/pages/')||p.includes('/subjects/'))return '../';
+  const p = window.location.pathname;
+  if (p.includes('/pages/') || p.includes('/subjects/')) return '../';
   return '';
 }
 
 function injectHeader(){
-  const host=document.getElementById('site-header');
-  if(!host)return;
-  host.innerHTML=`
+  const host = document.getElementById('site-header');
+  if (!host) return;
+  host.innerHTML = `
   <header class="site-header">
    <div class="header-inner">
     <a class="brand-block" href="${rp()}index.html">
@@ -46,6 +45,7 @@ function injectHeader(){
      <a class="nav-link" href="${rp()}pages/faculty.html" data-nav="faculty">Faculty</a>
      <a class="nav-link" href="${rp()}pages/students.html" data-nav="students">Students</a>
      <a class="nav-link" href="${rp()}pages/notices.html" data-nav="notices">Notices</a>
+     <a class="nav-link" href="${rp()}pages/attendance.html" data-nav="attendance">Attendance</a>
      <a class="nav-link" href="${rp()}pages/planner.html" data-nav="planner">Planner</a>
      <a class="nav-link" href="${rp()}pages/feedback.html" data-nav="feedback">Feedback</a>
     </nav>
@@ -62,9 +62,9 @@ function injectHeader(){
 }
 
 function injectFooter(){
-  const host=document.getElementById('site-footer');
-  if(!host)return;
-  host.innerHTML=`
+  const host = document.getElementById('site-footer');
+  if (!host) return;
+  host.innerHTML = `
   <footer class="site-footer">
    <div class="container">
     <div class="footer-grid">
@@ -86,6 +86,7 @@ function injectFooter(){
      </div></div>
      <div><h4>Students</h4><div class="footer-links">
       <a href="${rp()}pages/students.html">Directory</a>
+      <a href="${rp()}pages/attendance.html">Attendance</a>
       <a href="${rp()}pages/planner.html">Task Planner</a>
       <a href="${rp()}pages/notices.html">Notices</a>
       <a href="${rp()}pages/feedback.html">Feedback</a>
@@ -105,19 +106,20 @@ function injectFooter(){
 }
 
 function setupMobileMenu(){
-  const b=document.getElementById('menu-toggle'),n=document.getElementById('header-nav');
-  if(!b||!n)return;
-  b.addEventListener('click',()=>n.classList.toggle('open'));
+  const b = document.getElementById('menu-toggle');
+  const n = document.getElementById('header-nav');
+  if (!b || !n) return;
+  b.addEventListener('click', () => n.classList.toggle('open'));
 }
 
 function setActiveNav(){
-  const p=window.location.pathname;
-  let f=p.split('/').pop()||'index.html';
-  let k=f.replace('.html','');
-  if(f==='index.html'||f==='')k='home';
-  if(p.includes('/subjects/'))k='subjects';
-  document.querySelectorAll('.nav-link').forEach(l=>{
-    if(l.dataset.nav===k)l.classList.add('active');
+  const p = window.location.pathname;
+  let f = p.split('/').pop() || 'index.html';
+  let k = f.replace('.html', '');
+  if (f === 'index.html' || f === '') k = 'home';
+  if (p.includes('/subjects/')) k = 'subjects';
+  document.querySelectorAll('.nav-link').forEach(l => {
+    if (l.dataset.nav === k) l.classList.add('active');
   });
 }
 
@@ -127,19 +129,4 @@ function injectWatermark(){
   el.className = 'author-watermark';
   el.textContent = 'Om Sherlekar \u00B7 B053 \u00B7 CSE-B';
   document.body.appendChild(el);
-}
-
-function injectAntiCopy(){
-  // Right-click disabled on images only (not whole page - that annoys users)
-  document.addEventListener('contextmenu', e => {
-    if (e.target && e.target.tagName === 'IMG') {
-      e.preventDefault();
-    }
-  }, false);
-  // Console notice
-  try {
-    console.log('%cSBMP Academic Hub','font-size:16px;font-weight:bold;color:#0f2557');
-    console.log('%cAuthor: Om Sherlekar (B053) - CSE-B','font-size:12px;color:#c89b3c');
-    console.log('%c(c) 2026 - All rights reserved','font-size:11px;color:#7a86a0');
-  } catch(e){}
 }

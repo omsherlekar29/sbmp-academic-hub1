@@ -7,6 +7,7 @@ import { initHomeNotices, initCalendarStrip } from './notices.js';
 import { SUBJECTS, SUBJECT_ORDER } from '../data/subjects.js';
 import { SUBJECT_COLORS } from '../data/timetable.js';
 import { initPolish } from './polish.js';
+import { initAttendanceDashboard } from './attendance.js';
 
 function boot(){
   try { renderLayout(); } catch(e){ console.error('Layout error:', e); }
@@ -15,6 +16,7 @@ function boot(){
   try { initHomeNotices(); } catch(e){ console.error('Home notices error:', e); }
   try { initCalendarStrip(); } catch(e){ console.error('Calendar error:', e); }
   try { initSubjectsPreview(); } catch(e){ console.error('Subjects preview error:', e); }
+  try { initAttendanceDashboard(); } catch(e){ console.error('Attendance error:', e); }
   setTimeout(initPolish, 50);
 }
 

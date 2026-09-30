@@ -1,16 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta name="google-site-verification" content="npnJFw2eW9xew3KSl4dFzs2QFhyxWBL0PQ8yyW4SIlI" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SBMP Academic Hub — Computer Engineering · Semester I</title>
-<meta name="description" content="Academic portal for Computer Engineering Semester I, Division B, SBMP — AY 2026-2027.">
+<meta name="description" content="Academic portal for Computer Engineering Semester I, Division B — timetable, subjects, faculty, students, attendance tracker, and task planner.">
 <link rel="icon" href="assets/logos/sbmp-logo.jpg">
+
+<!-- Open Graph / Social preview -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="SBMP Academic Hub — Computer Engineering · Semester I">
+<meta property="og:description" content="Academic portal for Computer Engineering Semester I, Division B — timetable, subjects, faculty, students, attendance tracker, and task planner.">
+<meta property="og:url" content="https://sbmpacademichub.netlify.app/">
+<meta property="og:image" content="https://sbmpacademichub.netlify.app/assets/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SBMP Academic Hub">
+<meta name="twitter:description" content="Academic portal for Computer Engineering Semester I, Division B.">
+
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/themes.css">
 <link rel="stylesheet" href="css/responsive.css">
 <link rel="stylesheet" href="css/print.css">
+
 <script>(function(){try{var t=localStorage.getItem("sbmp-theme");if(!t){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
 </head>
 <body>
@@ -30,12 +41,7 @@
         </div>
       </div>
       <div>
-        <div class="clock-card">
-          <div class="clock-label">Live · Local Time</div>
-          <div class="clock-time" id="clock-time">--:--:--</div>
-          <div class="clock-date" id="clock-date">—</div>
-          <div class="clock-academic" id="clock-period">—</div>
-        </div>
+        <div id="clock-host"></div>
       </div>
     </div>
   </div>
@@ -55,6 +61,10 @@
     <a class="quick-tile" href="pages/portion.html">
       <div class="qt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12h6M9 16h6M9 8h6M5 3h14v18l-7-4-7 4z"/></svg></div>
       <div><div class="qt-title">Portion</div><div class="qt-desc">Unit-wise syllabus</div></div>
+    </a>
+    <a class="quick-tile" href="pages/attendance.html">
+      <div class="qt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+      <div><div class="qt-title">Attendance</div><div class="qt-desc">75% tracker</div></div>
     </a>
     <a class="quick-tile" href="pages/planner.html">
       <div class="qt-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
