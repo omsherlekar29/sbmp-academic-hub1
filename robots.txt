@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://sbmpacademichub.netlify.app/sitemap.xml
+Sitemap: https://omsherlekar29.github.io/sbmp-academic-hub1/sitemap.xml

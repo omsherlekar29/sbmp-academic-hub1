@@ -3,31 +3,31 @@
 
   <!-- Homepage -->
   <url>
-    <loc>https://sbmpacademichub.netlify.app/</loc>
+    <loc>https://omsherlekar29.github.io/sbmp-academic-hub1/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
 
   <!-- Main pages -->
-  <url><loc>https://sbmpacademichub.netlify.app/pages/academics.html</loc><priority>0.8</priority></url>
-  <url><loc>https://sbmpacademichub.netlify.app/pages/timetable.html</loc><priority>0.9</priority></url>
-  <url><loc>https://sbmpacademichub.netlify.app/pages/subjects.html</loc><priority>0.9</priority></url>
-  <url><loc>https://sbmpacademichub.netlify.app/pages/portion.html</loc><priority>0.8</priority></url>
-  <url><loc>https://sbmpacademichub.netlify.app/pages/faculty.html</loc><priority>0.7</priority></url>
-  <url><loc>https://sbmpacademichub.netlify.app/pages/students.html</loc><priority>0.7</priority></url>
-  <url><loc>https://sbmpacademichub.netlify.app/pages/notices.html</loc><priority>0.8</priority></url>
-  <url><loc>https://sbmpacademichub.netlify.app/pages/department.html</loc><priority>0.6</priority></url>
-  <url><loc>https://sbmpacademichub.netlify.app/pages/planner.html</loc><priority>0.7</priority></url>
-  <url><loc>https://sbmpacademichub.netlify.app/pages/feedback.html</loc><priority>0.6</priority></url>
-  <url><loc>https://sbmpacademichub.netlify.app/pages/attendance.html</loc><priority>0.8</priority></url>
+  <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/pages/academics.html</loc><priority>0.8</priority></url>
+  <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/pages/timetable.html</loc><priority>0.9</priority></url>
+  <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/pages/subjects.html</loc><priority>0.9</priority></url>
+  <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/pages/portion.html</loc><priority>0.8</priority></url>
+  <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/pages/faculty.html</loc><priority>0.7</priority></url>
+  <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/pages/students.html</loc><priority>0.7</priority></url>
+  <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/pages/notices.html</loc><priority>0.8</priority></url>
+  <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/pages/department.html</loc><priority>0.6</priority></url>
+  <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/pages/planner.html</loc><priority>0.7</priority></url>
+  <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/pages/feedback.html</loc><priority>0.6</priority></url>
+  <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/pages/attendance.html</loc><priority>0.8</priority></url>
 
   <!-- Subject pages -->
-  <url><loc>https://sbmpacademichub.netlify.app/subjects/mathematics.html</loc><priority>0.7</priority></url>
-  <url><loc>https://sbmpacademichub.netlify.app/subjects/applied-science.html</loc><priority>0.7</priority></url>
-  <url><loc>https://sbmpacademichub.netlify.app/subjects/communication-skills.html</loc><priority>0.7</priority></url>
-  <url><loc>https://sbmpacademichub.netlify.app/subjects/engineering-graphics.html</loc><priority>0.7</priority></url>
-  <url><loc>https://sbmpacademichub.netlify.app/subjects/fundamentals-of-computing.html</loc><priority>0.7</priority></url>
-  <url><loc>https://sbmpacademichub.netlify.app/subjects/universal-human-values.html</loc><priority>0.7</priority></url>
-  <url><loc>https://sbmpacademichub.netlify.app/subjects/website-designing.html</loc><priority>0.7</priority></url>
+  <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/subjects/mathematics.html</loc><priority>0.7</priority></url>
+  <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/subjects/applied-science.html</loc><priority>0.7</priority></url>
+  <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/subjects/communication-skills.html</loc><priority>0.7</priority></url>
+  <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/subjects/engineering-graphics.html</loc><priority>0.7</priority></url>
+  <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/subjects/fundamentals-of-computing.html</loc><priority>0.7</priority></url>
+  <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/subjects/universal-human-values.html</loc><priority>0.7</priority></url>
+  <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/subjects/website-designing.html</loc><priority>0.7</priority></url>
 
 </urlset>
