@@ -4,8 +4,12 @@ import { SUBJECTS, SUBJECT_ORDER } from '../data/subjects.js';
 import { SUBJECT_COLORS } from '../data/timetable.js';
 import { initSubjectAttendance } from './attendance.js';
 
+// Returns the relative prefix needed to reach the project root
+// from the current page. On /pages/*.html or /subjects/*.html → '../'.
 function subjPrefix(){
-  return window.location.pathname.includes('/pages/') ? '../' : '';
+  const p = window.location.pathname;
+  if (p.includes('/pages/') || p.includes('/subjects/')) return '../';
+  return '';
 }
 
 export function initSubjectDirectory(){
@@ -25,7 +29,7 @@ export function initSubjectDirectory(){
     h.innerHTML = list.map(c => {
       const sub = SUBJECTS[c];
       const co = SUBJECT_COLORS[c] || '#0f2557';
-      return `<a class="subject-card" href="subjects/${sub.slug}.html" style="--subject-color:${co};">
+      return `<a class="subject-card" href="${subjPrefix()}subjects/${sub.slug}.html" style="--subject-color:${co};">
         <div class="code">${sub.code}</div>
         <h3>${sub.name}</h3>
         <div class="meta">
