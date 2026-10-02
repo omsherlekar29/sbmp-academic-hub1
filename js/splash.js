@@ -1,9 +1,9 @@
 /* SBMP Academic Hub · Team TechNova · (c) 2026 */
 
 export function initSplash(){
-  // Only on homepage
+  // Only on the homepage
   if (!document.getElementById('clock-host')) return;
-  // Once per session
+  // Once per session only
   if (sessionStorage.getItem('sbmp-splash') === '1') return;
   sessionStorage.setItem('sbmp-splash', '1');
 
@@ -11,7 +11,7 @@ export function initSplash(){
   splash.className = 'splash';
   splash.innerHTML = `
     <div class="splash-inner">
-      <div class="splash-mark">TN</div>
+      <img class="splash-banner" src="assets/sbmp-banner.png" alt="" onerror="this.outerHTML='<div class=&quot;splash-fallback&quot;>TN</div>'">
       <div class="splash-team">TechNova</div>
       <div class="splash-divider"></div>
       <div class="splash-project">SBMP Academic Hub</div>
@@ -20,8 +20,9 @@ export function initSplash(){
   `;
   document.body.appendChild(splash);
 
+  // Total splash duration ~2.4s
   setTimeout(() => {
     splash.classList.add('splash-out');
-    setTimeout(() => splash.remove(), 600);
-  }, 1800);
+    setTimeout(() => splash.remove(), 700);
+  }, 2400);
 }

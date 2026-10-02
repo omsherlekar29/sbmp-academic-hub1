@@ -6,24 +6,23 @@
 </head><body>
 <div id="site-header"></div>
 <main><div class="container">
-<div class="breadcrumbs"><a href="../index.html">Home</a><span class="sep">/</span><span>About</span></div>
 
 <section class="about-hero">
   <img src="../assets/sbmp-banner.png" alt="SBMP Academic Hub" class="about-banner" onerror="this.style.display='none'">
   <div class="about-hero-text">
     <h1>About the Project</h1>
-    <p class="lede">SBMP Academic Hub is a student-built academic portal for Semester I, Division B, Computer Engineering — consolidating the timetable, syllabus, faculty, classmates, notices, attendance, and study resources into one responsive site.</p>
+    <p class="lede">A student-built academic portal for Semester I, Division B — Computer Engineering at SBMP. Consolidating timetable, syllabus, faculty, classmates, notices, attendance, and study resources into one responsive website.</p>
   </div>
 </section>
 
 <section class="section">
-  <div class="section-head"><h2>Team TechNova</h2></div>
-  <p class="text-mute" style="margin-bottom:20px;">Five students. One project. Built in Semester I of the 2026–2027 academic year.</p>
+  <div class="section-head"><h2>Meet TechNova</h2></div>
+  <p class="text-mute" style="margin-bottom:24px;max-width:700px;">A team of five Computer Engineering students. Every contribution — from data collection to design, testing, and deployment — shaped this project.</p>
   <div class="team-grid" id="team-grid"></div>
 </section>
 
 <section class="section">
-  <div class="section-head"><h2>Tech Stack</h2></div>
+  <div class="section-head"><h2>Technology Stack</h2></div>
   <div class="grid grid-3" id="tech-grid"></div>
 </section>
 
@@ -34,20 +33,26 @@
 
 <section class="section">
   <div class="section-head"><h2>Faculty Guide</h2></div>
-  <div class="card card-tight">
-    <div style="font-weight:600;">Mrs. Geetha Subramaniam</div>
-    <div class="text-mute" style="font-size:.85rem;">Faculty — Website Designing (WSD260802)</div>
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:16px;">
+      <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#05122e);color:var(--gold-bright);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1.1rem;font-weight:700;">GS</div>
+      <div>
+        <div style="font-weight:700;font-size:1.05rem;">Mrs. Geetha Subramaniam</div>
+        <div class="text-mute" style="font-size:.85rem;margin-top:2px;">Faculty — Website Designing (WSD260802)</div>
+      </div>
+    </div>
   </div>
 </section>
 
 <section class="section">
   <div class="section-head"><h2>Visit the Site</h2></div>
   <div class="qr-block">
-    <img src="../assets/qr-code.png" alt="QR Code" class="qr-img" onerror="this.style.display='none'; this.parentElement.classList.add('qr-missing');">
+    <img src="../assets/qr-code.png" alt="QR Code" class="qr-img" onerror="this.outerHTML='<div class=&quot;qr-missing&quot;></div>'">
     <div class="qr-info">
-      <div style="font-weight:600;margin-bottom:6px;">Scan to open on your phone</div>
-      <div class="text-mute" style="font-size:.85rem;">Or visit: <a href="https://omsherlekar29.github.io/sbmp-academic-hub1/" target="_blank" rel="noopener">omsherlekar29.github.io/sbmp-academic-hub1</a></div>
-      <div class="text-mute" style="font-size:.85rem;margin-top:6px;">Source: <a href="https://github.com/omsherlekar29/sbmp-academic-hub1" target="_blank" rel="noopener">github.com/omsherlekar29/sbmp-academic-hub1</a></div>
+      <h3 style="margin-top:0;font-family:var(--font-head);">Scan to open on your phone</h3>
+      <p class="text-mute" style="font-size:.88rem;margin-bottom:12px;">Point any camera at the code — it opens the live portal.</p>
+      <div style="font-size:.88rem;margin-bottom:6px;"><strong>Live:</strong> <a href="https://omsherlekar29.github.io/sbmp-academic-hub1/" target="_blank" rel="noopener">omsherlekar29.github.io/sbmp-academic-hub1</a></div>
+      <div style="font-size:.88rem;"><strong>Source:</strong> <a href="https://github.com/omsherlekar29/sbmp-academic-hub1" target="_blank" rel="noopener">github.com/omsherlekar29/sbmp-academic-hub1</a></div>
     </div>
   </div>
 </section>
@@ -72,8 +77,8 @@ document.getElementById('team-grid').innerHTML = TEAM_MEMBERS.map(m => `
 
 document.getElementById('tech-grid').innerHTML = TECH_STACK.map(t => `
   <div class="card card-tight">
-    <div style="font-weight:600;">${t.name}</div>
-    <div class="text-mute" style="font-size:.82rem;margin-top:4px;">${t.desc}</div>
+    <div style="font-weight:600;font-size:.98rem;">${t.name}</div>
+    <div class="text-mute" style="font-size:.82rem;margin-top:6px;line-height:1.55;">${t.desc}</div>
   </div>
 `).join('');
 

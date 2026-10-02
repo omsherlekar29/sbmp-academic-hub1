@@ -42,7 +42,7 @@ function injectHeader(){
      <a class="nav-link" href="${rp()}pages/timetable.html" data-nav="timetable">Timetable</a>
      <a class="nav-link" href="${rp()}pages/subjects.html" data-nav="subjects">Subjects</a>
      <a class="nav-link" href="${rp()}pages/attendance.html" data-nav="attendance">Attendance</a>
-     <a class="nav-link" href="${rp()}pages/downloads.html" data-nav="downloads">Downloads</a>
+     <a class="nav-link" href="${rp()}pages/resources.html" data-nav="resources">Resources</a>
      <a class="nav-link" href="${rp()}pages/about.html" data-nav="about">About</a>
      <div class="nav-dropdown">
       <button class="nav-link nav-drop-btn" id="more-btn" aria-haspopup="true" aria-expanded="false">More ▾</button>
@@ -96,7 +96,7 @@ function injectFooter(){
      <div><h4>Students</h4><div class="footer-links">
       <a href="${rp()}pages/students.html">Directory</a>
       <a href="${rp()}pages/attendance.html">Attendance</a>
-      <a href="${rp()}pages/downloads.html">Downloads</a>
+      <a href="${rp()}pages/resources.html">Resources</a>
       <a href="${rp()}pages/planner.html">Task Planner</a>
       <a href="${rp()}pages/notices.html">Notices</a>
      </div></div>
@@ -108,7 +108,7 @@ function injectFooter(){
     </div>
     <div class="footer-bottom">
      <span>&copy; 2026 TechNova &middot; All rights reserved</span>
-     <span>Built by Team TechNova &mdash; B041 · B052 · B053 · B056 · B060</span>
+     <span>Built by Team TechNova &mdash; B041 &middot; B052 &middot; B053 &middot; B056 &middot; B060</span>
     </div>
    </div>
   </footer>`;

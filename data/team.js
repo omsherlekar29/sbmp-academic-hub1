@@ -7,31 +7,31 @@ export const TEAM_MEMBERS = [
     name: 'Om Bharat Sherlekar', roll: 'B053',
     role: 'Full-Stack Developer & Team Lead',
     initials: 'OS',
-    contributions: 'Project architecture, front-end development, all features, deployment, documentation.'
+    contributions: 'Built the entire portal end to end — architecture, front-end, all features, deployment, documentation.'
   },
   {
     name: 'Chitraksh Vijay Raikar', roll: 'B041',
     role: 'QA & Testing',
     initials: 'CR',
-    contributions: 'Debugging, quality assurance, feature suggestions.'
+    contributions: 'Debugging, quality assurance, feature suggestions — most notably the calendar integration idea.'
   },
   {
     name: 'Gunja Rajesh Soni', roll: 'B056',
     role: 'UI / UX Design',
     initials: 'GS',
-    contributions: 'Visual design review, colour and layout feedback.'
+    contributions: 'Visual design review, colour palette feedback, layout suggestions.'
   },
   {
     name: 'Karan Ashok Tiwari', roll: 'B060',
     role: 'Content & Data',
     initials: 'KT',
-    contributions: 'Academic data collection, syllabus verification.'
+    contributions: 'Academic data collection, syllabus verification, resource organisation.'
   },
   {
     name: 'Mohammedabdullah Mohammedimran Shaikh', roll: 'B052',
     role: 'Documentation & Deployment',
     initials: 'MS',
-    contributions: 'Documentation, deployment verification.'
+    contributions: 'Documentation review, deployment verification, final quality check.'
   }
 ];
 
