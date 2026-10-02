@@ -740,16 +740,30 @@ table.tt-table td.tt-td.now-cell::after{content:'NOW';position:absolute;top:5px;
 .author-watermark::before{content:'◆ ';color:var(--gold)}
 
 /* ============ SPLASH ============ */
-.splash{
+/* Hidden by default. Only visible when <html> has class .splash-active. */
+.splash{display:none}
+
+html.splash-active,
+html.splash-active body{
+  overflow:hidden;
+  height:100%;
+  width:100%;
+}
+
+/* Hide everything except the splash while it's active */
+html.splash-active body > *:not(#splash-screen){
+  opacity:0;
+  pointer-events:none;
+}
+
+html.splash-active .splash{
+  display:flex;
   position:fixed;inset:0;z-index:99999;
+  align-items:center;justify-content:center;
   background:linear-gradient(160deg,#0a1f4a 0%,#05122e 100%);
-  display:flex;align-items:center;justify-content:center;
-  animation:splashIn 400ms ease both;
   overflow:hidden;
 }
-@keyframes splashIn{from{opacity:0}to{opacity:1}}
-.splash.splash-out{animation:splashOut 600ms cubic-bezier(.22,1,.36,1) forwards}
-@keyframes splashOut{to{opacity:0;visibility:hidden;transform:scale(1.02)}}
+
 .splash::before{
   content:'';position:absolute;inset:0;
   background:
@@ -757,67 +771,104 @@ table.tt-table td.tt-td.now-cell::after{content:'NOW';position:absolute;top:5px;
     radial-gradient(600px 300px at 90% 20%,rgba(10,31,74,.20),transparent 70%);
   pointer-events:none;
 }
+
 .splash-inner{
-  position:relative;text-align:center;color:#fff;padding:30px;
-  max-width:640px;
+  position:relative;text-align:center;color:#fff;
+  padding:30px;max-width:640px;
+  transform:translateZ(0);
 }
+
 .splash-banner{
   max-width:520px;width:100%;height:auto;
   border-radius:16px;margin-bottom:32px;
   box-shadow:0 30px 80px rgba(0,0,0,.45);
   border:1px solid rgba(184,135,58,.35);
-  animation:bannerIn 900ms cubic-bezier(.22,1,.36,1) both;
+  opacity:0;
+  transform:scale(.94) translateY(12px);
+  animation:splashBanner 900ms cubic-bezier(.22,1,.36,1) 80ms both;
+  will-change:transform,opacity;
 }
-@keyframes bannerIn{
-  from{opacity:0;transform:scale(.94) translateY(12px)}
+@keyframes splashBanner{
   to{opacity:1;transform:none}
 }
+
 .splash-fallback{
   width:120px;height:120px;border-radius:24px;margin:0 auto 32px;
   border:2px solid var(--gold);background:rgba(184,135,58,.08);
   display:flex;align-items:center;justify-content:center;
   font-family:var(--font-display);font-size:2.8rem;font-weight:700;
   color:var(--gold-bright);
-  animation:bannerIn 900ms cubic-bezier(.22,1,.36,1) both;
+  opacity:0;
+  transform:scale(.94) translateY(12px);
+  animation:splashBanner 900ms cubic-bezier(.22,1,.36,1) 80ms both;
 }
+
 .splash-team{
   font-family:var(--font-display);font-size:2.5rem;font-weight:700;
   letter-spacing:.02em;
   background:linear-gradient(90deg,var(--gold-bright) 0%,#fff 50%,var(--gold-bright) 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
-  animation:txtIn 600ms ease 500ms both;
   margin-bottom:10px;
+  opacity:0;
+  transform:translateY(8px);
+  animation:splashText 600ms cubic-bezier(.22,1,.36,1) 500ms both;
+  will-change:transform,opacity;
 }
-@keyframes txtIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
 .splash-divider{
-  width:70px;height:1px;margin:16px auto;
+  width:0;height:1px;margin:16px auto;
   background:linear-gradient(90deg,transparent,var(--gold-bright),transparent);
-  animation:txtIn 600ms ease 650ms both;
+  animation:splashDivider 700ms cubic-bezier(.22,1,.36,1) 650ms forwards;
 }
+@keyframes splashDivider{
+  to{width:70px}
+}
+
 .splash-project{
   font-size:.82rem;letter-spacing:.28em;text-transform:uppercase;
   color:rgba(255,255,255,.72);font-weight:600;
-  animation:txtIn 600ms ease 800ms both;
+  opacity:0;
+  transform:translateY(8px);
+  animation:splashText 600ms cubic-bezier(.22,1,.36,1) 800ms both;
+  will-change:transform,opacity;
 }
+@keyframes splashText{
+  to{opacity:1;transform:none}
+}
+
 .splash-bar{
   width:240px;height:2px;background:rgba(255,255,255,.10);
   border-radius:2px;margin:36px auto 0;overflow:hidden;
-  animation:txtIn 600ms ease 900ms both;
+  opacity:0;
+  animation:splashText 500ms ease 900ms both;
 }
+
 .splash-bar-fill{
   height:100%;width:0;
   background:linear-gradient(90deg,var(--gold),var(--gold-bright));
   border-radius:2px;
-  animation:barFill 1700ms cubic-bezier(.22,1,.36,1) 900ms forwards;
+  animation:splashBarFill 1700ms cubic-bezier(.22,1,.36,1) 900ms forwards;
 }
-@keyframes barFill{to{width:100%}}
+@keyframes splashBarFill{
+  to{width:100%}
+}
 
-/* ============ SCROLL ANIMATIONS ============ */
-.anim-init{opacity:0;transform:translateY(14px);transition:opacity 620ms cubic-bezier(.22,1,.36,1),transform 620ms cubic-bezier(.22,1,.36,1)}
-.anim-in{opacity:1;transform:translateY(0)}
+/* Exit */
+.splash.splash-out{
+  animation:splashExit 700ms cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes splashExit{
+  to{opacity:0;transform:scale(1.03)}
+}
+
+/* Reduced motion — skip animation, show briefly then hide */
 @media (prefers-reduced-motion: reduce){
-  .anim-init,.anim-in{opacity:1;transform:none;transition:none}
-  .splash,.splash-inner,.splash-banner,.splash-fallback,.splash-team,.splash-divider,.splash-project,.splash-bar,.splash-bar-fill{animation:none}
+  html.splash-active .splash{animation:none}
+  .splash-banner,.splash-fallback,.splash-team,.splash-project,.splash-divider,.splash-bar,.splash-bar-fill{
+    opacity:1 !important;transform:none !important;animation:none !important;width:auto;
+  }
+  .splash-divider{width:70px !important}
+  .splash-bar-fill{width:100% !important}
 }
 
 /* ============ ATTENDANCE ============ */
@@ -905,3 +956,546 @@ table.tt-table td.tt-td.now-cell::after{content:'NOW';position:absolute;top:5px;
 
 /* ============ PRINT ============ */
 @media print{.site-header,.site-footer,.tt-controls,.no-print,.author-watermark{display:none !important}}
+
+/* ============================================================
+   ROYAL FLUID ANIMATIONS
+   Team TechNova · (c) 2026
+   Slow, elegant, premium motion across the whole site.
+   ============================================================ */
+
+:root{
+  /* Royal timing tokens */
+  --royal-ease:cubic-bezier(.19,1,.22,1);       /* slow-out, elegant */
+  --royal-ease-in-out:cubic-bezier(.65,0,.35,1); /* symmetrical, smooth */
+  --royal-ease-soft:cubic-bezier(.22,1,.36,1);   /* gentle, natural */
+  --royal-quick:280ms;
+  --royal-base:480ms;
+  --royal-slow:720ms;
+  --royal-very-slow:1100ms;
+}
+
+/* ---------------- PAGE LOAD — soft fade + slight rise ---------------- */
+body{
+  animation:royalPageIn 720ms var(--royal-ease) both;
+}
+@keyframes royalPageIn{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Header — slides down into place */
+.site-header{
+  animation:royalHeaderIn 620ms var(--royal-ease) 80ms both;
+}
+@keyframes royalHeaderIn{
+  from{opacity:0;transform:translateY(-14px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Footer — gentle rise */
+.site-footer{
+  animation:royalFooterIn 720ms var(--royal-ease) 200ms both;
+}
+@keyframes royalFooterIn{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ---------------- SCROLL REVEAL — staggered, fluid ---------------- */
+.anim-init{
+  opacity:0;
+  transform:translateY(24px);
+  transition:
+    opacity var(--royal-slow) var(--royal-ease),
+    transform var(--royal-slow) var(--royal-ease);
+  will-change:opacity,transform;
+}
+.anim-in{opacity:1;transform:translateY(0)}
+
+/* Staggered delay — applied via nth-child when a grid/section reveals */
+.anim-stagger > *{opacity:0;transform:translateY(24px);transition:opacity 720ms var(--royal-ease),transform 720ms var(--royal-ease)}
+.anim-stagger.anim-in > *:nth-child(1){transition-delay:0ms}
+.anim-stagger.anim-in > *:nth-child(2){transition-delay:90ms}
+.anim-stagger.anim-in > *:nth-child(3){transition-delay:180ms}
+.anim-stagger.anim-in > *:nth-child(4){transition-delay:270ms}
+.anim-stagger.anim-in > *:nth-child(5){transition-delay:360ms}
+.anim-stagger.anim-in > *:nth-child(6){transition-delay:450ms}
+.anim-stagger.anim-in > *:nth-child(7){transition-delay:540ms}
+.anim-stagger.anim-in > *:nth-child(8){transition-delay:630ms}
+.anim-stagger.anim-in > *{opacity:1;transform:translateY(0)}
+
+/* ---------------- HERO ELEMENTS — cascade in ---------------- */
+.hero-eyebrow{
+  animation:royalFadeUp 700ms var(--royal-ease) 200ms both;
+}
+.hero h1{
+  animation:royalFadeUp 800ms var(--royal-ease) 340ms both;
+}
+.hero .lede{
+  animation:royalFadeUp 800ms var(--royal-ease) 480ms both;
+}
+.hero-actions{
+  animation:royalFadeUp 800ms var(--royal-ease) 620ms both;
+}
+@keyframes royalFadeUp{
+  from{opacity:0;transform:translateY(18px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Clock host slides in from right on desktop */
+#clock-host{
+  animation:royalSlideLeft 900ms var(--royal-ease) 400ms both;
+}
+@keyframes royalSlideLeft{
+  from{opacity:0;transform:translateX(24px)}
+  to{opacity:1;transform:translateX(0)}
+}
+@media(max-width:900px){
+  #clock-host{animation:royalFadeUp 800ms var(--royal-ease) 400ms both}
+}
+
+/* ---------------- CARDS — refined hover, fluid lift ---------------- */
+.card,
+.quick-tile,
+.subject-card,
+.notice-item,
+.calendar-card,
+.resource-card,
+.team-card,
+.stat-block,
+.unit,
+.task-item{
+  transition:
+    transform var(--royal-base) var(--royal-ease),
+    box-shadow var(--royal-base) var(--royal-ease),
+    border-color var(--royal-base) var(--royal-ease),
+    background-color var(--royal-base) var(--royal-ease),
+    color var(--royal-base) var(--royal-ease);
+}
+
+.card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 14px 40px rgba(10,31,74,.10);
+}
+
+.quick-tile:hover{
+  transform:translateY(-4px);
+  box-shadow:0 18px 44px rgba(10,31,74,.12);
+}
+.quick-tile .qt-icon{
+  transition:
+    transform 520ms var(--royal-ease),
+    background-color 420ms var(--royal-ease),
+    color 420ms var(--royal-ease);
+}
+.quick-tile:hover .qt-icon{
+  transform:scale(1.08) rotate(-3deg);
+}
+
+/* Quick tile left accent bar — smooth reveal */
+.quick-tile::before{
+  transition:transform 520ms var(--royal-ease);
+}
+
+/* Subject card — subtle top bar growth + lift */
+.subject-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 18px 44px rgba(10,31,74,.12);
+}
+.subject-card::before{
+  transition:height 520ms var(--royal-ease);
+}
+
+/* Notice card — soft slide right + border shift */
+.notice-item{
+  transition:
+    transform 520ms var(--royal-ease),
+    box-shadow 520ms var(--royal-ease),
+    border-color 420ms var(--royal-ease),
+    border-left-color 420ms var(--royal-ease);
+}
+.notice-item:hover{
+  transform:translateX(6px);
+}
+
+/* Calendar card — gentle float */
+.calendar-card:hover{
+  transform:translateY(-4px) scale(1.01);
+}
+
+/* Resource card — arrow slides, card lifts */
+.resource-card:hover{
+  transform:translateY(-3px);
+}
+.resource-card .res-arrow{
+  transition:
+    transform 480ms var(--royal-ease),
+    background-color 420ms var(--royal-ease),
+    color 420ms var(--royal-ease);
+}
+.resource-card:hover .res-arrow{
+  transform:translateX(4px);
+}
+
+/* Team card — gold bar draws in from left */
+.team-card::before{
+  transition:transform 620ms var(--royal-ease);
+}
+.team-card:hover{
+  transform:translateY(-4px);
+}
+.team-card .team-avatar{
+  transition:
+    transform 620ms var(--royal-ease),
+    box-shadow 620ms var(--royal-ease);
+}
+.team-card:hover .team-avatar{
+  transform:scale(1.08);
+  box-shadow:0 10px 26px rgba(10,31,74,.28);
+}
+
+/* Stat block */
+.stat-block:hover{
+  transform:translateY(-4px);
+}
+.stat-block .stat-value{
+  transition:color 480ms var(--royal-ease);
+}
+
+/* Unit accordion — smooth expand */
+.unit summary{
+  transition:background-color 380ms var(--royal-ease),padding 380ms var(--royal-ease);
+}
+.unit[open] summary{
+  background:linear-gradient(180deg,rgba(184,135,58,.04),transparent);
+}
+.unit .unit-no{
+  transition:
+    transform 520ms var(--royal-ease),
+    background-color 420ms var(--royal-ease),
+    color 420ms var(--royal-ease);
+}
+.unit[open] .unit-no{
+  transform:rotate(-6deg);
+  background:var(--gold-soft);
+  color:var(--gold-hover);
+}
+.unit .unit-body{
+  animation:royalExpand 520ms var(--royal-ease) both;
+}
+@keyframes royalExpand{
+  from{opacity:0;transform:translateY(-8px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* ---------------- BUTTONS — royal, fluid ---------------- */
+.btn{
+  position:relative;
+  overflow:hidden;
+  transition:
+    transform 420ms var(--royal-ease),
+    box-shadow 420ms var(--royal-ease),
+    background-color 380ms var(--royal-ease),
+    border-color 380ms var(--royal-ease),
+    color 380ms var(--royal-ease);
+}
+.btn::after{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 20%,rgba(255,255,255,.25) 50%,transparent 80%);
+  transform:translateX(-120%);
+  transition:transform 900ms var(--royal-ease);
+  pointer-events:none;
+}
+.btn:hover::after{
+  transform:translateX(120%);
+}
+.btn:hover{
+  transform:translateY(-2px);
+}
+.btn-primary:hover{
+  box-shadow:0 14px 34px rgba(10,31,74,.28);
+}
+.btn-gold:hover{
+  box-shadow:0 16px 38px rgba(184,135,58,.36);
+}
+.btn-secondary:hover{
+  box-shadow:0 10px 26px rgba(10,31,74,.10);
+}
+.btn:active{
+  transform:translateY(0) scale(.985);
+  transition-duration:120ms;
+}
+
+/* ---------------- NAV — smooth underline, gentle hover ---------------- */
+.nav-link{
+  transition:
+    background-color 420ms var(--royal-ease),
+    color 420ms var(--royal-ease),
+    padding 380ms var(--royal-ease);
+}
+.nav-link.active::after{
+  animation:royalUnderline 480ms var(--royal-ease) both;
+}
+@keyframes royalUnderline{
+  from{width:0;opacity:0}
+  to{width:22px;opacity:1}
+}
+
+/* Icon buttons — soft lift */
+.icon-btn{
+  transition:
+    transform 420ms var(--royal-ease),
+    background-color 380ms var(--royal-ease),
+    border-color 380ms var(--royal-ease),
+    color 380ms var(--royal-ease),
+    box-shadow 420ms var(--royal-ease);
+}
+.icon-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 22px rgba(10,31,74,.10);
+}
+
+/* Dropdown — smooth reveal */
+.nav-drop-menu.open{
+  animation:royalDrop 380ms var(--royal-ease) both;
+}
+@keyframes royalDrop{
+  from{opacity:0;transform:translateY(-10px) scale(.98)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+/* Dropdown links — subtle slide on hover */
+.nav-drop-link{
+  transition:
+    background-color 340ms var(--royal-ease),
+    color 340ms var(--royal-ease),
+    transform 340ms var(--royal-ease),
+    padding-left 340ms var(--royal-ease);
+}
+.nav-drop-link:hover{
+  padding-left:20px;
+}
+
+/* ---------------- LINKS & BREADCRUMBS ---------------- */
+a{
+  transition:
+    color 340ms var(--royal-ease),
+    opacity 340ms var(--royal-ease);
+}
+.breadcrumbs a:hover{
+  letter-spacing:.01em;
+}
+
+/* ---------------- SECTION HEADING ACCENT — gentle glow ---------------- */
+.section-head h2::before{
+  transition:
+    height 520ms var(--royal-ease),
+    box-shadow 520ms var(--royal-ease);
+}
+.section:hover .section-head h2::before{
+  height:30px;
+  box-shadow:0 0 18px var(--gold-glow);
+}
+
+/* ---------------- WATERMARK — soft pulse on load ---------------- */
+.author-watermark{
+  animation:royalWatermarkIn 900ms var(--royal-ease) 900ms both;
+}
+@keyframes royalWatermarkIn{
+  from{opacity:0;transform:translateY(10px) scale(.9)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+/* ---------------- THEME TRANSITION — one slow, elegant sweep ---------------- */
+html[data-theme] body,
+html[data-theme] .site-header,
+html[data-theme] .site-footer,
+html[data-theme] .card,
+html[data-theme] .quick-tile,
+html[data-theme] .subject-card,
+html[data-theme] .notice-item,
+html[data-theme] .calendar-card,
+html[data-theme] .resource-card,
+html[data-theme] .team-card,
+html[data-theme] .stat-block,
+html[data-theme] .task-item,
+html[data-theme] .unit{
+  transition:
+    background-color 480ms var(--royal-ease),
+    color 480ms var(--royal-ease),
+    border-color 480ms var(--royal-ease),
+    box-shadow 480ms var(--royal-ease);
+}
+
+/* ---------------- INPUTS & FORM FIELDS — smooth focus ---------------- */
+.field input,
+.field select,
+.field textarea,
+.dl-search input,
+.task-form input,
+.task-form select{
+  transition:
+    border-color 420ms var(--royal-ease),
+    box-shadow 520ms var(--royal-ease),
+    background-color 420ms var(--royal-ease),
+    transform 320ms var(--royal-ease);
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus,
+.dl-search input:focus{
+  transform:translateY(-1px);
+}
+
+/* ---------------- TIMETABLE — subtle cell lift ---------------- */
+table.tt-table td.tt-td{
+  transition:background-color 420ms var(--royal-ease),transform 380ms var(--royal-ease);
+}
+table.tt-table td.tt-td:hover{
+  transform:scale(1.01);
+}
+
+/* NOW cell — a slow, dignified pulse */
+table.tt-table td.tt-td.now-cell{
+  animation:royalNow 3.4s var(--royal-ease-in-out) infinite;
+}
+@keyframes royalNow{
+  0%,100%{box-shadow:inset 0 0 0 3px rgba(184,135,58,.14)}
+  50%    {box-shadow:inset 0 0 0 3px rgba(184,135,58,.32), 0 0 22px rgba(184,135,58,.18)}
+}
+
+/* ---------------- ATTENDANCE — smooth bar fills ---------------- */
+.att-summary{
+  animation:royalFadeUp 800ms var(--royal-ease) 120ms both;
+}
+.att-type-block{
+  animation:royalFadeUp 720ms var(--royal-ease) both;
+}
+.att-type-block:nth-child(2){animation-delay:80ms}
+.att-type-block:nth-child(3){animation-delay:160ms}
+
+/* ---------------- TABS — soft cross-fade ---------------- */
+.tt-tab,
+.filter-tab,
+.dl-filter{
+  transition:
+    background-color 420ms var(--royal-ease),
+    color 420ms var(--royal-ease),
+    box-shadow 420ms var(--royal-ease),
+    transform 340ms var(--royal-ease);
+}
+.tt-tab:hover,
+.filter-tab:hover,
+.dl-filter:hover{
+  transform:translateY(-1px);
+}
+
+/* ---------------- BADGES — subtle pop ---------------- */
+.badge,
+.att-badge{
+  transition:
+    background-color 420ms var(--royal-ease),
+    color 420ms var(--royal-ease),
+    transform 340ms var(--royal-ease);
+}
+.badge:hover,
+.att-badge:hover{
+  transform:translateY(-1px) scale(1.02);
+}
+
+/* ---------------- TABLES — row hover with quiet lift ---------------- */
+table.data tbody tr{
+  transition:background-color 420ms var(--royal-ease),transform 380ms var(--royal-ease);
+}
+table.data tbody tr:hover{
+  transform:translateX(2px);
+}
+
+/* ---------------- TASK ITEM — soft priority pulse on add ---------------- */
+.task-item{
+  animation:royalTaskIn 620ms var(--royal-ease) both;
+}
+@keyframes royalTaskIn{
+  from{opacity:0;transform:translateY(10px) scale(.98)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+
+/* ---------------- FOOTER LINKS — soft slide on hover ---------------- */
+.footer-links a{
+  transition:
+    color 380ms var(--royal-ease),
+    transform 420ms var(--royal-ease),
+    padding-left 420ms var(--royal-ease);
+}
+.footer-links a:hover{
+  padding-left:6px;
+}
+
+/* ---------------- QR BLOCK — gentle float ---------------- */
+.qr-img{
+  transition:
+    transform 620ms var(--royal-ease),
+    box-shadow 620ms var(--royal-ease);
+}
+.qr-img:hover{
+  transform:translateY(-4px) scale(1.02);
+  box-shadow:0 20px 50px rgba(10,31,74,.18);
+}
+
+/* ---------------- TEAM AVATAR — subtle gold shimmer on hover ---------------- */
+.team-avatar{
+  position:relative;
+  overflow:hidden;
+}
+.team-avatar::after{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent 25%,rgba(232,195,104,.35) 50%,transparent 75%);
+  transform:translateX(-150%);
+  transition:transform 900ms var(--royal-ease);
+}
+.team-card:hover .team-avatar::after{
+  transform:translateX(150%);
+}
+
+/* ---------------- RESOURCE ICON — gentle flip on hover ---------------- */
+.res-icon{
+  transition:
+    transform 520ms var(--royal-ease),
+    background-color 420ms var(--royal-ease),
+    color 420ms var(--royal-ease);
+}
+.resource-card:hover .res-icon{
+  transform:rotate(-4deg) scale(1.05);
+}
+
+/* ---------------- SCROLL MARGIN — reveal a bit before the element is on-screen ---------------- */
+@media (prefers-reduced-motion: reduce){
+  *,
+  *::before,
+  *::after{
+    animation-duration:.001ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;
+    scroll-behavior:auto !important;
+  }
+  body,.site-header,.site-footer,.hero-eyebrow,.hero h1,.hero .lede,.hero-actions,#clock-host,
+  .author-watermark,.anim-init,.anim-stagger > *{
+    animation:none !important;
+    opacity:1 !important;
+    transform:none !important;
+  }
+}
+
+/* ---------------- MOBILE — softer, shorter animations ---------------- */
+@media (max-width:700px){
+  :root{
+    --royal-quick:240ms;
+    --royal-base:380ms;
+    --royal-slow:520ms;
+  }
+  body{animation-duration:520ms}
+  .site-header{animation-duration:480ms}
+  .hero h1,.hero .lede,.hero-actions{animation-duration:600ms}
+}

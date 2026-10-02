@@ -19,7 +19,9 @@
   <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/pages/department.html</loc><priority>0.6</priority></url>
   <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/pages/planner.html</loc><priority>0.7</priority></url>
   <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/pages/feedback.html</loc><priority>0.6</priority></url>
-  <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/pages/attendance.html</loc><priority>0.8</priority></url>
+  <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/pages/attendance.html</loc><priority>0.9</priority></url>
+  <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/pages/resources.html</loc><priority>0.9</priority></url>
+  <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/pages/about.html</loc><priority>0.8</priority></url>
 
   <!-- Subject pages -->
   <url><loc>https://omsherlekar29.github.io/sbmp-academic-hub1/subjects/mathematics.html</loc><priority>0.7</priority></url>
