@@ -1,4 +1,4 @@
-/* SBMP Academic Hub · Om Sherlekar (B053) · CSE-B · (c) 2026 */
+/* SBMP Academic Hub · Team TechNova · (c) 2026 */
 
 const SVKM_LOGO = 'assets/logos/svkm-logo.jpg';
 const SBMP_LOGO = 'assets/logos/sbmp-logo.jpg';
@@ -8,6 +8,7 @@ export function renderLayout(){
   injectHeader();
   injectFooter();
   setupMobileMenu();
+  setupMoreMenu();
   setActiveNav();
   injectWatermark();
 }
@@ -38,16 +39,24 @@ function injectHeader(){
     </button>
     <nav class="header-nav" id="header-nav">
      <a class="nav-link" href="${rp()}index.html" data-nav="home">Home</a>
-     <a class="nav-link" href="${rp()}pages/academics.html" data-nav="academics">Academics</a>
      <a class="nav-link" href="${rp()}pages/timetable.html" data-nav="timetable">Timetable</a>
      <a class="nav-link" href="${rp()}pages/subjects.html" data-nav="subjects">Subjects</a>
-     <a class="nav-link" href="${rp()}pages/portion.html" data-nav="portion">Portion</a>
-     <a class="nav-link" href="${rp()}pages/faculty.html" data-nav="faculty">Faculty</a>
-     <a class="nav-link" href="${rp()}pages/students.html" data-nav="students">Students</a>
-     <a class="nav-link" href="${rp()}pages/notices.html" data-nav="notices">Notices</a>
      <a class="nav-link" href="${rp()}pages/attendance.html" data-nav="attendance">Attendance</a>
-     <a class="nav-link" href="${rp()}pages/planner.html" data-nav="planner">Planner</a>
-     <a class="nav-link" href="${rp()}pages/feedback.html" data-nav="feedback">Feedback</a>
+     <a class="nav-link" href="${rp()}pages/downloads.html" data-nav="downloads">Downloads</a>
+     <a class="nav-link" href="${rp()}pages/about.html" data-nav="about">About</a>
+     <div class="nav-dropdown">
+      <button class="nav-link nav-drop-btn" id="more-btn" aria-haspopup="true" aria-expanded="false">More ▾</button>
+      <div class="nav-drop-menu" id="more-menu">
+       <a class="nav-drop-link" href="${rp()}pages/notices.html" data-nav="notices">Notices</a>
+       <a class="nav-drop-link" href="${rp()}pages/planner.html" data-nav="planner">Task Planner</a>
+       <a class="nav-drop-link" href="${rp()}pages/students.html" data-nav="students">Students</a>
+       <a class="nav-drop-link" href="${rp()}pages/faculty.html" data-nav="faculty">Faculty</a>
+       <a class="nav-drop-link" href="${rp()}pages/portion.html" data-nav="portion">Portion</a>
+       <a class="nav-drop-link" href="${rp()}pages/academics.html" data-nav="academics">Academics</a>
+       <a class="nav-drop-link" href="${rp()}pages/department.html" data-nav="department">Department</a>
+       <a class="nav-drop-link" href="${rp()}pages/feedback.html" data-nav="feedback">Feedback</a>
+      </div>
+     </div>
     </nav>
     <div class="header-utility">
      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">
@@ -87,19 +96,19 @@ function injectFooter(){
      <div><h4>Students</h4><div class="footer-links">
       <a href="${rp()}pages/students.html">Directory</a>
       <a href="${rp()}pages/attendance.html">Attendance</a>
+      <a href="${rp()}pages/downloads.html">Downloads</a>
       <a href="${rp()}pages/planner.html">Task Planner</a>
       <a href="${rp()}pages/notices.html">Notices</a>
-      <a href="${rp()}pages/feedback.html">Feedback</a>
      </div></div>
      <div><h4>Institution</h4><div class="footer-links">
+      <a href="${rp()}pages/about.html">About TechNova</a>
       <a href="${rp()}pages/department.html">Department</a>
-      <a href="${rp()}pages/academics.html">Academics</a>
       <a href="${OFFICIAL_URL}" target="_blank" rel="noopener">sbmp.ac.in &nearr;</a>
      </div></div>
     </div>
     <div class="footer-bottom">
-     <span>&copy; 2026 Om Sherlekar &middot; B053 &middot; All rights reserved</span>
-     <span>SBMP Academic Hub &mdash; Semester I &middot; Division B</span>
+     <span>&copy; 2026 TechNova &middot; All rights reserved</span>
+     <span>Built by Team TechNova &mdash; B041 · B052 · B053 · B056 · B060</span>
     </div>
    </div>
   </footer>`;
@@ -112,13 +121,28 @@ function setupMobileMenu(){
   b.addEventListener('click', () => n.classList.toggle('open'));
 }
 
+function setupMoreMenu(){
+  const btn = document.getElementById('more-btn');
+  const menu = document.getElementById('more-menu');
+  if (!btn || !menu) return;
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const open = menu.classList.toggle('open');
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  document.addEventListener('click', () => {
+    menu.classList.remove('open');
+    btn.setAttribute('aria-expanded', 'false');
+  });
+}
+
 function setActiveNav(){
   const p = window.location.pathname;
   let f = p.split('/').pop() || 'index.html';
   let k = f.replace('.html', '');
   if (f === 'index.html' || f === '') k = 'home';
   if (p.includes('/subjects/')) k = 'subjects';
-  document.querySelectorAll('.nav-link').forEach(l => {
+  document.querySelectorAll('.nav-link, .nav-drop-link').forEach(l => {
     if (l.dataset.nav === k) l.classList.add('active');
   });
 }
@@ -127,6 +151,6 @@ function injectWatermark(){
   if (document.querySelector('.author-watermark')) return;
   const el = document.createElement('div');
   el.className = 'author-watermark';
-  el.textContent = 'Om Sherlekar \u00B7 B053 \u00B7 CSE-B';
+  el.textContent = 'TechNova';
   document.body.appendChild(el);
 }

@@ -1,0 +1,86 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>About — SBMP Academic Hub</title>
+<link rel="icon" href="../assets/logos/sbmp-logo.jpg">
+<link rel="stylesheet" href="../css/style.css"><link rel="stylesheet" href="../css/themes.css"><link rel="stylesheet" href="../css/responsive.css">
+<script>(function(){try{var t=localStorage.getItem("sbmp-theme");if(!t){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+</head><body>
+<div id="site-header"></div>
+<main><div class="container">
+<div class="breadcrumbs"><a href="../index.html">Home</a><span class="sep">/</span><span>About</span></div>
+
+<section class="about-hero">
+  <img src="../assets/sbmp-banner.png" alt="SBMP Academic Hub" class="about-banner" onerror="this.style.display='none'">
+  <div class="about-hero-text">
+    <h1>About the Project</h1>
+    <p class="lede">SBMP Academic Hub is a student-built academic portal for Semester I, Division B, Computer Engineering — consolidating the timetable, syllabus, faculty, classmates, notices, attendance, and study resources into one responsive site.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><h2>Team TechNova</h2></div>
+  <p class="text-mute" style="margin-bottom:20px;">Five students. One project. Built in Semester I of the 2026–2027 academic year.</p>
+  <div class="team-grid" id="team-grid"></div>
+</section>
+
+<section class="section">
+  <div class="section-head"><h2>Tech Stack</h2></div>
+  <div class="grid grid-3" id="tech-grid"></div>
+</section>
+
+<section class="section">
+  <div class="section-head"><h2>Project at a Glance</h2></div>
+  <div class="stats-grid" id="stats-grid"></div>
+</section>
+
+<section class="section">
+  <div class="section-head"><h2>Faculty Guide</h2></div>
+  <div class="card card-tight">
+    <div style="font-weight:600;">Mrs. Geetha Subramaniam</div>
+    <div class="text-mute" style="font-size:.85rem;">Faculty — Website Designing (WSD260802)</div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head"><h2>Visit the Site</h2></div>
+  <div class="qr-block">
+    <img src="../assets/qr-code.png" alt="QR Code" class="qr-img" onerror="this.style.display='none'; this.parentElement.classList.add('qr-missing');">
+    <div class="qr-info">
+      <div style="font-weight:600;margin-bottom:6px;">Scan to open on your phone</div>
+      <div class="text-mute" style="font-size:.85rem;">Or visit: <a href="https://omsherlekar29.github.io/sbmp-academic-hub1/" target="_blank" rel="noopener">omsherlekar29.github.io/sbmp-academic-hub1</a></div>
+      <div class="text-mute" style="font-size:.85rem;margin-top:6px;">Source: <a href="https://github.com/omsherlekar29/sbmp-academic-hub1" target="_blank" rel="noopener">github.com/omsherlekar29/sbmp-academic-hub1</a></div>
+    </div>
+  </div>
+</section>
+
+</div></main>
+<div id="site-footer"></div>
+<script type="module">
+import './../js/main.js';
+import { TEAM_MEMBERS, TECH_STACK, PROJECT_STATS } from '../data/team.js';
+
+document.getElementById('team-grid').innerHTML = TEAM_MEMBERS.map(m => `
+  <div class="team-card">
+    <div class="team-avatar">${m.initials}</div>
+    <div class="team-info">
+      <div class="team-name">${m.name}</div>
+      <div class="team-roll">Roll ${m.roll}</div>
+      <div class="team-role">${m.role}</div>
+      <div class="team-contrib">${m.contributions}</div>
+    </div>
+  </div>
+`).join('');
+
+document.getElementById('tech-grid').innerHTML = TECH_STACK.map(t => `
+  <div class="card card-tight">
+    <div style="font-weight:600;">${t.name}</div>
+    <div class="text-mute" style="font-size:.82rem;margin-top:4px;">${t.desc}</div>
+  </div>
+`).join('');
+
+document.getElementById('stats-grid').innerHTML = PROJECT_STATS.map(s => `
+  <div class="stat-block">
+    <div class="stat-value">${s.value}</div>
+    <div class="stat-label">${s.label}</div>
+  </div>
+`).join('');
+</script></body></html>

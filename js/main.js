@@ -1,4 +1,4 @@
-/* SBMP Academic Hub · Om Sherlekar (B053) · CSE-B · (c) 2026 */
+/* SBMP Academic Hub · Team TechNova · (c) 2026 */
 
 import { renderLayout } from './layout.js';
 import { initTheme } from './theme.js';
@@ -6,18 +6,20 @@ import { initClock } from './clock.js';
 import { initHomeNotices, initCalendarStrip } from './notices.js';
 import { SUBJECTS, SUBJECT_ORDER } from '../data/subjects.js';
 import { SUBJECT_COLORS } from '../data/timetable.js';
-import { initPolish } from './polish.js';
+import { initAnimations } from './animations.js';
 import { initAttendanceDashboard } from './attendance.js';
+import { initSplash } from './splash.js';
 
 function boot(){
+  try { initSplash(); } catch(e){ console.error('Splash error:', e); }
   try { renderLayout(); } catch(e){ console.error('Layout error:', e); }
-  try { initTheme(); }    catch(e){ console.error('Theme error:',  e); }
-  try { initClock(); }    catch(e){ console.error('Clock error:',  e); }
+  try { initTheme(); } catch(e){ console.error('Theme error:', e); }
+  try { initClock(); } catch(e){ console.error('Clock error:', e); }
   try { initHomeNotices(); } catch(e){ console.error('Home notices error:', e); }
   try { initCalendarStrip(); } catch(e){ console.error('Calendar error:', e); }
   try { initSubjectsPreview(); } catch(e){ console.error('Subjects preview error:', e); }
   try { initAttendanceDashboard(); } catch(e){ console.error('Attendance error:', e); }
-  setTimeout(initPolish, 50);
+  setTimeout(initAnimations, 100);
 }
 
 function initSubjectsPreview(){
