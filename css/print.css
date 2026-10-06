@@ -1,9 +1,156 @@
-@media print{
- body{background:#fff;color:#000;font-size:12px}
- .site-header,.site-footer,.no-print,.menu-toggle,.header-utility,.tt-controls,.planner-toolbar,.breadcrumbs{display:none !important}
- .container{max-width:100%;padding:0}
- .card,.tt-grid,.table-wrap{box-shadow:none;border-color:#999}
- a{color:#000;text-decoration:none}
- .tt-grid{grid-template-columns:80px repeat(6,1fr);gap:3px}
- .tt-head{background:#ddd !important;color:#000 !important}
+/* ============================================================
+   Print stylesheet
+   Team TechNova · (c) 2026
+   ============================================================ */
+
+@media print {
+  /* Page setup */
+  @page { margin: 14mm 12mm; }
+
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 11pt;
+    line-height: 1.4;
+  }
+
+  /* Hide chrome — header, footer, watermark, nav, all controls */
+  .site-header,
+  .site-footer,
+  .author-watermark,
+  .skip-link,
+  .back-to-top,
+  .breadcrumbs,
+  .hero-actions,
+  .tt-controls,
+  .planner-toolbar,
+  .task-form,
+  .no-print,
+  #attendance-import,
+  #splash-screen,
+  button,
+  .btn,
+  .nav-dropdown,
+  .notice-cal-btn,
+  .calendar-add-btn,
+  .att-actions,
+  .att-panel-footer,
+  .review-actions {
+    display: none !important;
+  }
+
+  /* Remove shadows and rounded corners for cleaner printing */
+  .card,
+  .quick-tile,
+  .subject-card,
+  .notice-item,
+  .calendar-card,
+  .task-item,
+  .unit,
+  .att-panel,
+  .att-type-block,
+  .stat-block,
+  .team-card,
+  .qr-block,
+  .import-panel,
+  .import-review,
+  .resource-card,
+  .att-summary,
+  .countdown-card,
+  .clock-card {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    border: 1px solid #999 !important;
+  }
+
+  /* Colours printed without heavy fills */
+  .clock-card,
+  .att-summary,
+  .countdown-card {
+    background: #f5f5f5 !important;
+    color: #000 !important;
+  }
+  .att-summary::before,
+  .clock-card::before,
+  .countdown-card::before { display: none !important; }
+
+  /* Typography adjustments */
+  h1, h2, h3, h4 { color: #000; page-break-after: avoid; }
+  h1 { font-size: 18pt; }
+  h2 { font-size: 14pt; border-bottom: 1px solid #000; padding-bottom: 4pt; }
+  h3 { font-size: 12pt; }
+  p, li { color: #000; }
+
+  /* Accordion: force all units open for print */
+  details.unit > summary { cursor: default; }
+  details.unit > .unit-body { display: block !important; }
+
+  /* Links: show as plain text, no colour */
+  a { color: #000; text-decoration: none; }
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    color: #555;
+  }
+
+  /* Subject hero — clean top block */
+  .subject-hero {
+    border-top: 2px solid #000 !important;
+    border-bottom: 1px solid #000;
+    padding: 12pt 0;
+    background: #fff !important;
+  }
+
+  /* Tables */
+  table, table.data, table.tt-table {
+    page-break-inside: avoid;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  table.data th, table.data td {
+    border: 1px solid #999;
+    padding: 4pt 6pt;
+    color: #000;
+    background: #fff !important;
+  }
+  table.data th { background: #eee !important; }
+
+  /* Timetable grid — scale down to fit */
+  .tt-wrap { overflow: visible !important; }
+  table.tt-table {
+    min-width: 0 !important;
+    width: 100% !important;
+    font-size: 8pt !important;
+  }
+  table.tt-table th.tt-th-time,
+  table.tt-table th.tt-th-day {
+    background: #333 !important;
+    color: #fff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  table.tt-table td.tt-td,
+  table.tt-table td.tt-td-time {
+    background: #fff !important;
+    color: #000 !important;
+    padding: 3pt 4pt;
+    font-size: 8pt;
+  }
+  table.tt-table td.tt-td.recess,
+  table.tt-table td.tt-td.library { font-weight: bold; }
+  table.tt-table td.tt-td.free { color: #666; }
+
+  /* Attendance panel — keep it clean */
+  .att-panel-percent,
+  .att-type-percent,
+  .att-summary-value {
+    color: #000 !important;
+  }
+
+  /* Page breaks — avoid awkward splits */
+  .section { page-break-inside: auto; }
+  .card, .unit, .notice-item, .task-item {
+    page-break-inside: avoid;
+  }
+  section { page-break-inside: auto; }
 }
