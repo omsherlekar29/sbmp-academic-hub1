@@ -1499,3 +1499,87 @@ table.data tbody tr:hover{
   .site-header{animation-duration:480ms}
   .hero h1,.hero .lede,.hero-actions{animation-duration:600ms}
 }
+
+/* ============================================================
+   Mobile timetable — day view
+   ============================================================ */
+.tt-mobile{display:block}
+.tt-day-tabs{display:flex;gap:6px;overflow-x:auto;padding:6px 0 12px;margin-bottom:12px;-webkit-overflow-scrolling:touch}
+.tt-day-tab{
+  flex:0 0 auto;padding:9px 14px;border-radius:999px;
+  border:1px solid var(--border);background:var(--surface);
+  color:var(--text-soft);font-family:inherit;font-size:.82rem;font-weight:600;
+  cursor:pointer;transition:all 220ms ease;
+}
+.tt-day-tab.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.tt-mobile-list{display:flex;flex-direction:column;gap:8px}
+.ttm-row{display:grid;grid-template-columns:90px 1fr;gap:12px;padding:12px 14px;background:var(--surface);border:1px solid var(--border);border-radius:12px}
+.ttm-row.ttm-recess,.ttm-row.ttm-library{background:var(--surface-2)}
+.ttm-row.ttm-recess .ttm-body,.ttm-row.ttm-library .ttm-body{color:var(--text-mute);font-weight:600;letter-spacing:.08em;font-size:.82rem}
+.ttm-row.ttm-free{background:transparent;border-style:dashed;color:var(--text-mute)}
+.ttm-row.ttm-class{background:var(--surface)}
+.ttm-row.ttm-class.now-cell{border-color:var(--gold);box-shadow:0 0 0 3px rgba(184,135,58,.16)}
+.ttm-row.ttm-lab-2h{background:linear-gradient(180deg,#eef3fc 0%,#dde7f7 100%);border-left:4px solid var(--primary)}
+.ttm-time{font-size:.75rem;font-weight:700;color:var(--text-soft);letter-spacing:.02em}
+.ttm-code{font-weight:700;font-size:.9rem;color:var(--text)}
+.ttm-name{font-size:.82rem;color:var(--text-soft);margin-top:2px}
+.ttm-meta{font-size:.72rem;color:var(--text-mute);margin-top:4px}
+.ttm-lab-block{padding-bottom:8px;margin-bottom:8px;border-bottom:1px dashed rgba(10,31,74,.2)}
+.ttm-lab-block:last-child{border-bottom:none;padding-bottom:0;margin-bottom:0}
+.ttm-lab-tag{display:inline-block;font-size:.6rem;font-weight:800;letter-spacing:.08em;color:#fff;background:var(--primary);padding:2px 6px;border-radius:3px;margin-bottom:4px}
+
+[data-theme="dark"] .ttm-row.ttm-lab-2h{background:linear-gradient(180deg,#152344 0%,#0f1830 100%)}
+[data-theme="dark"] .ttm-row.ttm-class{background:var(--surface)}
+[data-theme="dark"] .ttm-row.ttm-recess,
+[data-theme="dark"] .ttm-row.ttm-library{background:var(--surface-2)}
+
+/* ============================================================
+   SAP lookup panel
+   ============================================================ */
+.sap-lookup-panel{
+  margin-top:28px;padding:24px 26px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius-lg);box-shadow:var(--shadow-xs);
+}
+.sap-lookup-head h3{font-family:var(--font-head);font-size:1.1rem;margin:0}
+.sap-lookup-form{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.sap-lookup-form input{
+  flex:1;min-width:200px;padding:12px 14px;
+  border:1px solid var(--border-strong);border-radius:11px;
+  font-family:inherit;font-size:.95rem;
+  background:var(--surface);color:var(--text);
+}
+.sap-lookup-form input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-glow)}
+.sap-result{margin-top:14px}
+.sap-card{padding:16px 18px;background:var(--surface-2);border-radius:12px;border:1px solid var(--border)}
+.sap-card-row{display:flex;justify-content:space-between;gap:14px;padding:6px 0;font-size:.9rem}
+.sap-card-label{color:var(--text-mute);font-weight:600;font-size:.8rem;letter-spacing:.05em;text-transform:uppercase}
+.sap-card-value{color:var(--text);font-weight:600;text-align:right}
+.sap-card-highlight{border-top:1px solid var(--border);margin-top:6px;padding-top:12px}
+.sap-card-sap{font-family:var(--font-mono,monospace);letter-spacing:.05em;color:var(--gold-hover)}
+
+/* ============================================================
+   Focus indicators
+   ============================================================ */
+:focus{outline:none}
+:focus-visible{
+  outline:2px solid var(--gold);
+  outline-offset:3px;
+  border-radius:6px;
+}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{
+  outline:2px solid var(--gold);
+  outline-offset:3px;
+}
+
+/* ============================================================
+   Skip to content
+   ============================================================ */
+.skip-link{
+  position:absolute;top:-60px;left:12px;
+  padding:10px 16px;border-radius:8px;
+  background:var(--primary);color:#fff;
+  font-weight:600;text-decoration:none;z-index:10000;
+  transition:top 180ms ease;
+}
+.skip-link:focus{top:12px;color:#fff;text-decoration:none}

@@ -1,8 +1,10 @@
-export const TIME_SLOTS = ['08:00 - 09:00','09:00 - 10:00','10:00 - 11:00','11:00 - 12:00','12:00 - 01:00','01:00 - 02:00','02:00 - 03:00','03:00 - 04:00','04:00 - 05:00'];
-export const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+/* SBMP Academic Hub · Team TechNova · (c) 2026 */
 
-// Lab entries are stored as arrays so both hours of a 2-hour lab share the same data.
-// The timetable renderer merges them into a single rowspan=2 cell.
+export const TIME_SLOTS = [
+  '08:00 - 09:00','09:00 - 10:00','10:00 - 11:00','11:00 - 12:00',
+  '12:00 - 01:00','01:00 - 02:00','02:00 - 03:00','03:00 - 04:00','04:00 - 05:00'
+];
+export const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
 export const TIMETABLE_DIV_B = {
  Monday:{
@@ -104,7 +106,7 @@ export const TIMETABLE_DIV_B = {
 };
 
 export const SUBJECT_COLORS = {
- EMT268901:'#1e40af', ASC268902:'#047857', CMS268903:'#b45309',
- ENG268904:'#7c3aed', FCS260801:'#0369a1', UHV268905:'#be123c', WSD260802:'#0f766e'
+ EMT268901:'#0a1f4a', ASC268902:'#0f766e', CMS268903:'#b45309',
+ ENG268904:'#6d28d9', FCS260801:'#0369a1', UHV268905:'#be123c', WSD260802:'#0f766e'
 };
 export const MODE_LABEL = { CL:'Lecture', TL:'Tutorial', LL:'Lab', SL:'Self Learning' };
