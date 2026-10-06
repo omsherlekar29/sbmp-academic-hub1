@@ -1,30 +1,30 @@
 /* SBMP Academic Hub · Team TechNova · (c) 2026 */
 
-export function initSplash(){
-  const splash = document.getElementById('splash-screen');
+export function initSplash() {
+  var splash = document.getElementById('splash-screen');
   if (!splash) return;
 
-  // If html doesn't have .splash-active, the splash markup is hidden by CSS — do nothing.
   if (!document.documentElement.classList.contains('splash-active')) {
-    // Safety: also ensure no scroll-lock remains
     document.documentElement.style.overflow = '';
     return;
   }
 
-  // Lock scroll while the splash is on screen
   document.documentElement.style.overflow = 'hidden';
 
-  // After the entrance animations finish, fade out
-  const HOLD_MS = 2400;
+  var reduced = false;
+  try {
+    reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  } catch (e) { /* ignore */ }
 
-  setTimeout(() => {
+  var HOLD_MS = reduced ? 900 : 1700;
+  var EXIT_MS = reduced ? 200 : 450;
+
+  setTimeout(function () {
     splash.classList.add('splash-out');
-
-    // After the exit transition, remove the element and release scroll
-    setTimeout(() => {
-      splash.remove();
+    setTimeout(function () {
+      if (splash.parentNode) splash.parentNode.removeChild(splash);
       document.documentElement.classList.remove('splash-active');
       document.documentElement.style.overflow = '';
-    }, 700);
+    }, EXIT_MS);
   }, HOLD_MS);
 }
