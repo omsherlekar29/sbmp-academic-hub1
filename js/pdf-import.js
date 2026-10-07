@@ -22,51 +22,120 @@ function loadPdfJs() {
   });
 }
 
-var SUBJECT_KEYWORDS = {
-  ASC268902: { TH: ['APPLIED SCIENCE TH'], PR: ['APPLIED SCIENCE PR'] },
-  CMS268903: { TH: ['COMMUNICATION SKILLS TH'], TU: ['COMMUNICATION SKILLS TU'] },
-  EMT268901: { TH: ['ENGINEERING MATHEMATICS TH'], TU: ['ENGINEERING MATHEMATICS TU'] },
-  ENG268904: { PR: ['ENGINEERING GRAPHICS PR'], TH: ['ENGINEERING GRAPHICS TH'] },
-  FCS260801: { PR: ['COMPUTING SYST PR'], TH: ['COMPUTING SYST TH'] },
-  UHV268905: { TH: ['UNIVERSAL HUMAN VALUES TH'], TU: ['UNIVERSAL HUMAN VALUES TU'] },
-  WSD260802: { PR: ['WEBSITE DESIGNING PR'], TH: ['WEBSITE DESIGNING TH'] }
-};
+/* ================================================================
+   PARSER
+   Matches the exact SBMP attendance report format:
 
-function normalize(str) {
-  return String(str).replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-}
+   Each row starts with an S.No (1-14), followed by:
+   - Subject name (may be wrapped across lines)
+   - Total Conducted
+   - Total Attended
+   - Optional Percentage (decimal)
+   - Class type marker (TH-CSE-B / PR-CSE-B-S2 / TU-CSE-B)
+     which may appear on the same line or wrap to a following line.
 
-function readCountsAfter(tail) {
-  var match = tail.match(/\d+/);
-  if (!match) return null;
-  var numStr = match[0];
-  var limit = Math.min(numStr.length, 8);
-  for (var split = 1; split < limit; split++) {
-    var a = numStr.substring(0, split);
-    var b = numStr.substring(split);
-    if (!a || !b) continue;
-    var total = parseInt(a, 10);
-    var attended = parseInt(b.substring(0, 3), 10);
-    if (isNaN(total) || isNaN(attended)) continue;
-    if (total < 1 || total > 200) continue;
-    if (attended < 0 || attended > 200) continue;
-    if (attended > total) continue;
-    return { total: total, attended: attended };
-  }
+   Strategy:
+   1. Split into lines
+   2. Group lines into "rows" — each row begins with a line starting
+      with an S.No
+   3. For each row: detect subject, class type, and the last two integers
+   ================================================================ */
+
+function detectSubject(rowText) {
+  if (/\bMATHEMATICS\b/i.test(rowText)) return 'EMT268901';
+  if (/\bGRAPHICS\b/i.test(rowText)) return 'ENG268904';
+  if (/\bAPPLIED\b/i.test(rowText)) return 'ASC268902';
+  if (/\bCOMMUNICATION\b/i.test(rowText)) return 'CMS268903';
+  if (/\bFUNDAMENTALS\b/i.test(rowText)) return 'FCS260801';
+  if (/\bUNIVERSAL\b/i.test(rowText)) return 'UHV268905';
+  if (/\bWEBSITE\b/i.test(rowText)) return 'WSD260802';
   return null;
 }
 
-function findCounts(normalizedText, keywords) {
-  for (var k = 0; k < keywords.length; k++) {
-    var kw = normalize(keywords[k]);
-    var idx = normalizedText.indexOf(kw);
-    if (idx === -1) continue;
-    var tail = normalizedText.substring(idx + kw.length, idx + kw.length + 40);
-    var counts = readCountsAfter(tail);
-    if (counts) return counts;
-  }
+function detectType(rowText) {
+  if (/\bTH-CSE-B\b/i.test(rowText)) return 'TH';
+  if (/\bTU-CSE-B\b/i.test(rowText)) return 'TU';
+  if (/\bPR-CSE-B\b/i.test(rowText)) return 'PR';
   return null;
 }
+
+function parseReport(text) {
+  var lines = text.split('\n');
+  var cleaned = [];
+  for (var i = 0; i < lines.length; i++) {
+    var l = lines[i].replace(/\s+/g, ' ').trim();
+    if (l.length > 0) cleaned.push(l);
+  }
+
+  /* Group into rows */
+  var rows = [];
+  var current = null;
+
+  for (var j = 0; j < cleaned.length; j++) {
+    var line = cleaned[j];
+    var sNoMatch = line.match(/^(\d{1,2})\s/);
+    if (sNoMatch) {
+      var n = parseInt(sNoMatch[1], 10);
+      if (n >= 1 && n <= 30) {
+        if (current) rows.push(current);
+        current = line;
+        continue;
+      }
+    }
+    if (current) current += ' ' + line;
+  }
+  if (current) rows.push(current);
+
+  console.log('[pdf-import] Rows grouped:', rows.length);
+
+  /* Process rows */
+  var result = {};
+
+  for (var r = 0; r < rows.length; r++) {
+    var row = rows[r];
+    var code = detectSubject(row);
+    var type = detectType(row);
+
+    if (!code || !type) {
+      console.log('[pdf-import] Skipped row:', row.substring(0, 60));
+      continue;
+    }
+
+    /* Remove class markers and decimal percentages before extracting numbers */
+    var prepared = row
+      .replace(/TH-CSE-B/gi, ' ')
+      .replace(/TU-CSE-B/gi, ' ')
+      .replace(/PR-CSE-B-S2/gi, ' ')
+      .replace(/PR-CSE-B/gi, ' ')
+      .replace(/\d+\.\d+/g, ' ');
+
+    var nums = prepared.match(/\d+/g) || [];
+    nums = nums.map(Number);
+
+    /* First number is the S.No — drop it. Last two are total + attended. */
+    if (nums.length < 3) {
+      console.log('[pdf-import] Not enough numbers in row:', row.substring(0, 60), nums);
+      continue;
+    }
+
+    var lastTwo = nums.slice(-2);
+    var total = lastTwo[0];
+    var attended = lastTwo[1];
+
+    /* Sanity checks */
+    if (total < 1 || total > 300) continue;
+    if (attended < 0 || attended > total) continue;
+
+    if (!result[code]) result[code] = {};
+    result[code][type] = { total: total, attended: attended };
+
+    console.log('[pdf-import] Matched', code, type, '→', attended + '/' + total);
+  }
+
+  return result;
+}
+
+/* ---------------- PDF READING ---------------- */
 
 function readPdfText(file) {
   return file.arrayBuffer().then(function (buf) {
@@ -74,6 +143,7 @@ function readPdfText(file) {
   }).then(function (pdf) {
     var full = '';
     var chain = Promise.resolve();
+
     for (var i = 1; i <= pdf.numPages; i++) {
       (function (pageNum) {
         chain = chain.then(function () {
@@ -84,6 +154,7 @@ function readPdfText(file) {
                 if (Math.abs(ya - yb) > 3) return yb - ya;
                 return a.transform[4] - b.transform[4];
               });
+
               var lastY = null;
               var line = '';
               for (var k = 0; k < items.length; k++) {
@@ -101,9 +172,12 @@ function readPdfText(file) {
         });
       })(i);
     }
+
     return chain.then(function () { return full; });
   });
 }
+
+/* ---------------- UI ---------------- */
 
 export function initPdfImport() {
   var host = document.getElementById('attendance-import');
@@ -119,19 +193,7 @@ export function initPdfImport() {
         '<input type="file" id="pdf-file" accept="application/pdf" style="display:none">' +
         '<button class="btn btn-primary btn-sm" id="pdf-pick">Choose PDF File</button>' +
         '<button class="btn btn-ghost btn-sm" id="pdf-manual">Enter Manually</button>' +
-        '<button class="btn btn-ghost btn-sm" id="pdf-debug" style="display:none">Show PDF Text</button>' +
         '<span id="pdf-status" class="import-status"></span>' +
-      '</div>' +
-    '</div>' +
-    '<div id="pdf-debug-panel" style="display:none;margin-bottom:22px;">' +
-      '<div class="import-review">' +
-        '<div class="review-head"><h3>Raw PDF Text</h3>' +
-        '<p class="review-sub">Copy this and send it to the developer.</p></div>' +
-        '<textarea id="pdf-raw" style="width:100%;height:300px;padding:12px;font-family:Consolas,monospace;font-size:.78rem;background:var(--surface-2);color:var(--text);border:1px solid var(--border-strong);border-radius:8px;" readonly></textarea>' +
-        '<div class="review-actions" style="margin-top:12px;">' +
-          '<button class="btn btn-secondary btn-sm" id="pdf-copy">Copy</button>' +
-          '<button class="btn btn-ghost btn-sm" id="pdf-close-debug">Close</button>' +
-        '</div>' +
       '</div>' +
     '</div>' +
     '<div id="pdf-review" class="import-review" style="display:none"></div>';
@@ -139,62 +201,27 @@ export function initPdfImport() {
   var fileInput = document.getElementById('pdf-file');
   var pickBtn = document.getElementById('pdf-pick');
   var manualBtn = document.getElementById('pdf-manual');
-  var debugBtn = document.getElementById('pdf-debug');
-  var debugPanel = document.getElementById('pdf-debug-panel');
-  var rawArea = document.getElementById('pdf-raw');
   var status = document.getElementById('pdf-status');
   var review = document.getElementById('pdf-review');
 
   pickBtn.addEventListener('click', function () { fileInput.click(); });
   manualBtn.addEventListener('click', function () { showForm({}, false); });
-  debugBtn.addEventListener('click', function () {
-    debugPanel.style.display = debugPanel.style.display === 'none' ? 'block' : 'none';
-  });
-  document.getElementById('pdf-close-debug').addEventListener('click', function () {
-    debugPanel.style.display = 'none';
-  });
-  document.getElementById('pdf-copy').addEventListener('click', function () {
-    rawArea.select();
-    document.execCommand('copy');
-    status.textContent = 'PDF text copied to clipboard.';
-    status.className = 'import-status ok';
-  });
 
   fileInput.addEventListener('change', function (e) {
     var file = e.target.files[0];
     if (!file) return;
     status.textContent = 'Reading PDF…';
     status.className = 'import-status';
-    debugBtn.style.display = 'none';
 
     loadPdfJs().then(function () {
       return readPdfText(file);
     }).then(function (text) {
-      console.log('[pdf-import] Raw extracted text length:', text.length);
-      console.log('[pdf-import] First 500 chars:', text.substring(0, 500));
-      rawArea.value = text;
-      debugBtn.style.display = 'inline-flex';
-
-      var normalized = normalize(text);
-      console.log('[pdf-import] Normalized length:', normalized.length);
-
-      var parsed = {};
-      for (var i = 0; i < SUBJECT_ORDER.length; i++) {
-        var code = SUBJECT_ORDER[i];
-        var keywords = SUBJECT_KEYWORDS[code] || {};
-        var types = Object.keys(keywords);
-        if (types.length === 0) continue;
-        parsed[code] = {};
-        for (var t = 0; t < types.length; t++) {
-          var type = types[t];
-          var counts = findCounts(normalized, keywords[type]);
-          if (counts) parsed[code][type] = counts;
-        }
-      }
+      var parsed = parseReport(text);
 
       var total = 0;
       var codes = Object.keys(parsed);
       for (var c = 0; c < codes.length; c++) total += Object.keys(parsed[codes[c]]).length;
+
       console.log('[pdf-import] Total values extracted:', total);
 
       if (total > 0) {
@@ -202,7 +229,7 @@ export function initPdfImport() {
         status.className = 'import-status ok';
         showForm(parsed, true);
       } else {
-        status.textContent = 'Could not read automatically. Click "Show PDF Text" and copy the text for debugging.';
+        status.textContent = 'Could not read automatically. Please enter the numbers manually.';
         status.className = 'import-status warn';
         showForm({}, false);
       }

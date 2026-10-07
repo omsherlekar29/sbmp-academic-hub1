@@ -16,8 +16,9 @@ export function initSplash() {
     reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   } catch (e) { /* ignore */ }
 
-  var HOLD_MS = reduced ? 900 : 1700;
-  var EXIT_MS = reduced ? 200 : 450;
+  /* Total ~1.9s for full animation, faster in reduced motion */
+  var HOLD_MS = reduced ? 900 : 1900;
+  var EXIT_MS = reduced ? 200 : 480;
 
   setTimeout(function () {
     splash.classList.add('splash-out');
