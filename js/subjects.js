@@ -5,15 +5,12 @@ import { SUBJECT_COLORS } from '../data/timetable.js';
 import { NOTES } from '../data/notes.js';
 import { initSubjectAttendance } from './attendance.js';
 
-/* Returns '../' when the current page is one level deep (in /pages/ or
-   /subjects/), and '' when the current page is at the root. */
 function subjPrefix() {
   var p = window.location.pathname;
   if (p.indexOf('/pages/') > -1 || p.indexOf('/subjects/') > -1) return '../';
   return '';
 }
 
-/* Escapes text before inserting it into HTML. */
 function escapeHTML(s) {
   if (!s) return '';
   return String(s).replace(/[&<>"']/g, function (c) {
@@ -21,16 +18,16 @@ function escapeHTML(s) {
   });
 }
 
-/* ----------------------------------------------------------------
-   SUBJECT DIRECTORY (pages/subjects.html)
-   Renders the grid of subject cards with a live search box.
-   ---------------------------------------------------------------- */
-
+/* ==========================================================
+   SUBJECT DIRECTORY — pages/subjects.html
+   FIX: prepend subjPrefix() so the link works from /pages/
+   ========================================================== */
 export function initSubjectDirectory() {
   var host = document.getElementById('subjects-grid');
   if (!host) return;
 
   var search = document.getElementById('subject-search');
+  var prefix = subjPrefix();   // '../' when on /pages/, '' when on root
 
   function render(q) {
     var query = (q || '').toLowerCase();
@@ -39,9 +36,9 @@ export function initSubjectDirectory() {
     for (var i = 0; i < SUBJECT_ORDER.length; i++) {
       var code = SUBJECT_ORDER[i];
       var s = SUBJECTS[code];
-      var nameMatches = s.name.toLowerCase().indexOf(query) > -1;
-      var codeMatches = code.toLowerCase().indexOf(query) > -1;
-      if (!query || nameMatches || codeMatches) list.push(code);
+      if (!query || s.name.toLowerCase().indexOf(query) > -1 || code.toLowerCase().indexOf(query) > -1) {
+        list.push(code);
+      }
     }
 
     if (list.length === 0) {
@@ -54,7 +51,7 @@ export function initSubjectDirectory() {
       var c = list[j];
       var sub = SUBJECTS[c];
       var color = SUBJECT_COLORS[c] || '#0a1f4a';
-      html += '<a class="subject-card" href="subjects/' + sub.slug + '.html" style="--subject-color:' + color + ';">' +
+      html += '<a class="subject-card" href="' + prefix + 'subjects/' + sub.slug + '.html" style="--subject-color:' + color + ';">' +
         '<div class="code">' + sub.code + '</div>' +
         '<h3>' + sub.name + '</h3>' +
         '<div class="meta">' +
@@ -75,11 +72,9 @@ export function initSubjectDirectory() {
   }
 }
 
-/* ----------------------------------------------------------------
-   SUBJECT DETAIL (subjects/*.html)
-   Renders the full subject page.
-   ---------------------------------------------------------------- */
-
+/* ==========================================================
+   SUBJECT DETAIL — subjects/*.html
+   ========================================================== */
 export function renderSubjectDetail(code, mountSelector) {
   var mount = document.querySelector(mountSelector);
   if (!mount) return;
@@ -95,7 +90,7 @@ export function renderSubjectDetail(code, mountSelector) {
   var books = s.resources_books || s.resources || [];
   var prefix = subjPrefix();
 
-  /* ---- Hero + print button ---- */
+  /* --- Hero --- */
   var heroHTML = '' +
     '<header class="subject-hero" style="border-top:4px solid ' + color + ';">' +
       '<div class="container">' +
@@ -115,7 +110,7 @@ export function renderSubjectDetail(code, mountSelector) {
       '</div>' +
     '</header>';
 
-  /* ---- Meta cards ---- */
+  /* --- Meta cards --- */
   var metaHTML = '' +
     '<div class="grid grid-3" style="margin-bottom:30px;">' +
       '<div class="card"><div class="text-mute" style="font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;">Credits</div><div style="font-family:var(--font-head);font-size:1.5rem;font-weight:700;">' + s.credits + '</div></div>' +
@@ -123,7 +118,7 @@ export function renderSubjectDetail(code, mountSelector) {
       '<div class="card"><div class="text-mute" style="font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;">IKS Hours</div><div style="font-family:var(--font-head);font-size:1.5rem;font-weight:700;">' + (s.ikkHrs || 0) + '</div></div>' +
     '</div>';
 
-  /* ---- Notes / Resources ---- */
+  /* --- Notes --- */
   var notesHTML = '';
   if (notes.length > 0) {
     var noteCards = '';
@@ -135,7 +130,6 @@ export function renderSubjectDetail(code, mountSelector) {
       if (ext === 'pdf') cls = 'res-pdf';
       else if (ext === 'pptx' || ext === 'ppt') cls = 'res-ppt';
       else if (ext === 'docx' || ext === 'doc') cls = 'res-doc';
-      else if (ext === 'xlsx' || ext === 'xls') cls = 'res-xls';
 
       var url = prefix + 'resources/' + s.slug + '/' + n.file;
       noteCards += '<a class="resource-card" href="' + url + '" download rel="noopener">' +
@@ -144,130 +138,86 @@ export function renderSubjectDetail(code, mountSelector) {
           '<div class="res-title">' + escapeHTML(n.title) + '</div>' +
           '<div class="res-meta">' + kind + (n.size ? ' · ' + n.size : '') + '</div>' +
         '</div>' +
-        '<div class="res-arrow">' +
-          '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>' +
-        '</div>' +
+        '<div class="res-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg></div>' +
       '</a>';
     }
     notesHTML = '<section class="section">' +
-      '<div class="section-head">' +
-        '<h2>Download Notes &amp; Resources</h2>' +
-        '<span class="text-mute" style="font-size:.85rem">' + notes.length + ' file' + (notes.length === 1 ? '' : 's') + ' available</span>' +
-      '</div>' +
+      '<div class="section-head"><h2>Download Notes &amp; Resources</h2>' +
+      '<span class="text-mute" style="font-size:.85rem">' + notes.length + ' file' + (notes.length === 1 ? '' : 's') + ' available</span></div>' +
       '<div class="resources-grid">' + noteCards + '</div>' +
     '</section>';
   }
 
-  /* ---- Course outcomes ---- */
+  /* --- Outcomes --- */
   var outcomesHTML = '<section class="section"><h2>Course Outcomes</h2><ol>';
-  for (var oi = 0; oi < s.outcomes.length; oi++) {
-    outcomesHTML += '<li style="margin-bottom:6px;">' + s.outcomes[oi] + '</li>';
-  }
+  for (var oi = 0; oi < s.outcomes.length; oi++) outcomesHTML += '<li style="margin-bottom:6px;">' + s.outcomes[oi] + '</li>';
   outcomesHTML += '</ol></section>';
 
-  /* ---- Units accordion ---- */
+  /* --- Units --- */
   var unitsHTML = '<section class="section"><h2>Units</h2>';
   for (var ui = 0; ui < s.units.length; ui++) {
     var u = s.units[ui];
     var topicsHTML = '';
-    for (var ti = 0; ti < u.topics.length; ti++) {
-      topicsHTML += '<li>' + u.topics[ti] + '</li>';
-    }
+    for (var ti = 0; ti < u.topics.length; ti++) topicsHTML += '<li>' + u.topics[ti] + '</li>';
     unitsHTML += '<details class="unit"' + (u.no === 1 ? ' open' : '') + '>' +
-      '<summary>' +
-        '<span class="unit-no">' + u.no + '</span>' +
-        '<span>' + u.title + '</span>' +
-        (u.hours ? '<span class="hours">' + u.hours + ' hrs</span>' : '') +
-      '</summary>' +
+      '<summary><span class="unit-no">' + u.no + '</span><span>' + u.title + '</span>' +
+      (u.hours ? '<span class="hours">' + u.hours + ' hrs</span>' : '') + '</summary>' +
       '<div class="unit-body"><ul>' + topicsHTML + '</ul></div>' +
     '</details>';
   }
   unitsHTML += '</section>';
 
-  /* ---- Practicals table ---- */
+  /* --- Practicals --- */
   var practicalsHTML = '';
   if (s.practicals && s.practicals.length > 0) {
     var rows = '';
     for (var pi = 0; pi < s.practicals.length; pi++) {
       var p = s.practicals[pi];
-      rows += '<tr>' +
-        '<td>' + (pi + 1) + '</td>' +
-        '<td>' + p.title + '</td>' +
-        '<td>' + p.hrs + '</td>' +
-        '<td><span class="badge">' + p.co + '</span></td>' +
-      '</tr>';
+      rows += '<tr><td>' + (pi + 1) + '</td><td>' + p.title + '</td><td>' + p.hrs + '</td><td><span class="badge">' + p.co + '</span></td></tr>';
     }
-    practicalsHTML = '<section class="section">' +
-      '<h2>Practicals / Tutorials</h2>' +
-      '<div class="table-wrap">' +
-        '<table class="data">' +
-          '<thead><tr><th>Sr.</th><th>Title</th><th>Hrs</th><th>CO</th></tr></thead>' +
-          '<tbody>' + rows + '</tbody>' +
-        '</table>' +
-      '</div>' +
-    '</section>';
+    practicalsHTML = '<section class="section"><h2>Practicals / Tutorials</h2>' +
+      '<div class="table-wrap"><table class="data">' +
+      '<thead><tr><th>Sr.</th><th>Title</th><th>Hrs</th><th>CO</th></tr></thead>' +
+      '<tbody>' + rows + '</tbody></table></div></section>';
   }
 
-  /* ---- Tutorials list ---- */
+  /* --- Tutorials --- */
   var tutorialsHTML = '';
   if (s.tutorials && s.tutorials.length > 0) {
     var tItems = '';
-    for (var tji = 0; tji < s.tutorials.length; tji++) {
-      tItems += '<li>' + s.tutorials[tji] + '</li>';
-    }
+    for (var tji = 0; tji < s.tutorials.length; tji++) tItems += '<li>' + s.tutorials[tji] + '</li>';
     tutorialsHTML = '<section class="section"><h2>Tutorials</h2><ul>' + tItems + '</ul></section>';
   }
 
-  /* ---- Books ---- */
+  /* --- Books --- */
   var booksHTML = '';
   if (books.length > 0) {
     var bookCards = '';
     for (var bi = 0; bi < books.length; bi++) {
       var b = books[bi];
-      bookCards += '<div class="card card-tight">' +
-        '<div style="font-weight:600;">' + escapeHTML(b.title) + '</div>' +
+      bookCards += '<div class="card card-tight"><div style="font-weight:600;">' + escapeHTML(b.title) + '</div>' +
         '<div class="text-mute" style="font-size:.85rem;">' + escapeHTML(b.author) + '</div>' +
-        '<div class="text-mute" style="font-size:.78rem;">' + escapeHTML(b.pub) + '</div>' +
-      '</div>';
+        '<div class="text-mute" style="font-size:.78rem;">' + escapeHTML(b.pub) + '</div></div>';
     }
-    booksHTML = '<section class="section"><h2>Recommended Books</h2>' +
-      '<div class="grid grid-2">' + bookCards + '</div></section>';
+    booksHTML = '<section class="section"><h2>Recommended Books</h2><div class="grid grid-2">' + bookCards + '</div></section>';
   }
 
-  /* ---- Attendance tracker placeholder (rendered by attendance.js) ---- */
+  /* --- Attendance + Planner --- */
   var attendanceHTML = '<section class="section" id="subject-attendance"></section>';
-
-  /* ---- Task planner ---- */
   var plannerHTML = '<section class="section no-print">' +
-    '<div class="section-head">' +
-      '<h2>Subject Task Planner</h2>' +
-      '<span class="text-mute" style="font-size:.85rem;">Saved locally in your browser</span>' +
-    '</div>' +
+    '<div class="section-head"><h2>Subject Task Planner</h2><span class="text-mute" style="font-size:.85rem;">Saved locally in your browser</span></div>' +
     '<div id="subject-planner-form"></div>' +
     '<div id="subject-task-list" class="task-list" style="margin-top:14px;"></div>' +
   '</section>';
 
   mount.innerHTML = heroHTML +
     '<div class="container">' +
-      metaHTML +
-      attendanceHTML +
-      notesHTML +
-      outcomesHTML +
-      unitsHTML +
-      practicalsHTML +
-      tutorialsHTML +
-      booksHTML +
-      plannerHTML +
+      metaHTML + attendanceHTML + notesHTML + outcomesHTML +
+      unitsHTML + practicalsHTML + tutorialsHTML + booksHTML + plannerHTML +
     '</div>';
 
-  /* Wire up the print button */
   var printBtn = document.getElementById('subject-print-btn');
-  if (printBtn) {
-    printBtn.addEventListener('click', function () {
-      window.print();
-    });
-  }
+  if (printBtn) printBtn.addEventListener('click', function () { window.print(); });
 
-  /* Render the attendance tracker for this subject */
   initSubjectAttendance(code);
 }

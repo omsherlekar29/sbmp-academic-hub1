@@ -4,9 +4,8 @@ import { SUBJECTS, SUBJECT_ORDER } from '../data/subjects.js';
 import { SUBJECT_TYPES, TYPE_LABELS } from '../data/attendance-config.js';
 import { getAttendanceRaw, saveAttendanceRaw } from './attendance.js';
 
-/* Loads PDF.js from CDN on first use.
-   If it fails, the manual entry form still works. */
 var pdfJsLoaded = false;
+
 function loadPdfJs() {
   if (pdfJsLoaded || window.pdfjsLib) { pdfJsLoaded = true; return Promise.resolve(); }
   return new Promise(function (resolve, reject) {
@@ -23,67 +22,109 @@ function loadPdfJs() {
   });
 }
 
-/* Keyword patterns for the SBMP attendance report.
-   Each subject/type has unique text so we don't confuse TH with PR. */
+/* ---- Keyword patterns for the SBMP attendance report ---- */
 var SUBJECT_KEYWORDS = {
   ASC268902: { TH: ['APPLIED SCIENCE TH'], PR: ['APPLIED SCIENCE PR'] },
   CMS268903: { TH: ['COMMUNICATION SKILLS TH'], TU: ['COMMUNICATION SKILLS TU'] },
   EMT268901: { TH: ['ENGINEERING MATHEMATICS TH'], TU: ['ENGINEERING MATHEMATICS TU'] },
   ENG268904: { PR: ['ENGINEERING GRAPHICS PR'], TH: ['ENGINEERING GRAPHICS TH'] },
-  FCS260801: { PR: ['COMPUTING SYST PR', 'COMPUTING SYSTEM PR'], TH: ['COMPUTING SYST TH', 'COMPUTING SYSTEM TH'] },
+  FCS260801: { PR: ['COMPUTING SYST PR'], TH: ['COMPUTING SYST TH'] },
   UHV268905: { TH: ['UNIVERSAL HUMAN VALUES TH'], TU: ['UNIVERSAL HUMAN VALUES TU'] },
   WSD260802: { PR: ['WEBSITE DESIGNING PR'], TH: ['WEBSITE DESIGNING TH'] }
 };
 
-/* Removes percentage values and takes the last two integers on the line.
-   In the SBMP PDF, the last two ints are (Total Conducted, Attended). */
-function extractCounts(line) {
-  var stripped = line.replace(/\d+\.\d+/g, '');
-  var raw = stripped.match(/\d+/g) || [];
-  var ints = [];
-  for (var i = 0; i < raw.length; i++) {
-    var n = parseInt(raw[i], 10);
-    if (n >= 0 && n <= 500) ints.push(n);
-  }
-  if (ints.length < 2) return null;
-  var lastTwo = ints.slice(-2);
-  return { total: lastTwo[0], attended: lastTwo[1] };
+/* Turn a string into a normalized form: only uppercase letters and digits.
+   "APPLIED SCIENCE TH-CSE-B 23 23 94.29" → "APPLIEDSCIENCETHCSEB23239429" */
+function normalize(str) {
+  return String(str).replace(/[^A-Za-z0-9]/g, '').toUpperCase();
 }
 
-function parseAttendanceText(text) {
-  var result = {};
-  var lines = text.split('\n');
-  for (var i = 0; i < lines.length; i++) {
-    lines[i] = lines[i].replace(/\s+/g, ' ').trim();
-  }
-  lines = lines.filter(function (l) { return l.length > 0; });
+/* Given normalized text starting right after a keyword, read the first
+   two integers we can find. Each integer is 1-3 digits, and attended
+   must be <= total. */
+function readCountsAfter(normalizedTail) {
+  /* Find the first run of digits */
+  var match = normalizedTail.match(/\d+/);
+  if (!match) return null;
 
-  for (var s = 0; s < SUBJECT_ORDER.length; s++) {
-    var code = SUBJECT_ORDER[s];
-    result[code] = {};
-    var keywords = SUBJECT_KEYWORDS[code] || {};
-    var types = Object.keys(keywords);
-    for (var t = 0; t < types.length; t++) {
-      var type = types[t];
-      var kws = keywords[type];
-      var dataLines = [];
-      for (var l = 0; l < lines.length; l++) {
-        var up = lines[l].toUpperCase();
-        var match = false;
-        for (var k = 0; k < kws.length; k++) {
-          if (up.indexOf(kws[k].toUpperCase()) > -1) { match = true; break; }
-        }
-        if (match) {
-          var counts = extractCounts(lines[l]);
-          if (counts) dataLines.push(counts);
-        }
-      }
-      if (dataLines.length > 0) {
-        result[code][type] = dataLines[dataLines.length - 1];
-      }
-    }
+  var numStr = match[0];
+
+  /* Try every possible split of the first 6-8 chars into two integers. */
+  var limit = Math.min(numStr.length, 8);
+  for (var split = 1; split < limit; split++) {
+    var a = numStr.substring(0, split);
+    var b = numStr.substring(split);
+    if (!a || !b) continue;
+
+    var total = parseInt(a, 10);
+    var attended = parseInt(b.substring(0, 3), 10);
+
+    if (isNaN(total) || isNaN(attended)) continue;
+    if (total < 1 || total > 200) continue;
+    if (attended < 0 || attended > 200) continue;
+    if (attended > total) continue;
+
+    /* Sanity: total + attended shouldn't look like a percentage fragment */
+    return { total: total, attended: attended };
   }
-  return result;
+  return null;
+}
+
+/* Search for a keyword in the normalized text, then read the counts after it. */
+function findCounts(normalizedText, keywords) {
+  for (var k = 0; k < keywords.length; k++) {
+    var kw = normalize(keywords[k]);
+    var idx = normalizedText.indexOf(kw);
+    if (idx === -1) continue;
+
+    var tail = normalizedText.substring(idx + kw.length, idx + kw.length + 40);
+    var counts = readCountsAfter(tail);
+    if (counts) return counts;
+  }
+  return null;
+}
+
+/* Extract all text from the PDF, sorting items top-to-bottom and left-to-right. */
+function readPdfText(file) {
+  return file.arrayBuffer().then(function (buf) {
+    return window.pdfjsLib.getDocument({ data: buf }).promise;
+  }).then(function (pdf) {
+    var full = '';
+    var chain = Promise.resolve();
+
+    for (var i = 1; i <= pdf.numPages; i++) {
+      (function (pageNum) {
+        chain = chain.then(function () {
+          return pdf.getPage(pageNum).then(function (page) {
+            return page.getTextContent().then(function (content) {
+              var items = content.items.slice().sort(function (a, b) {
+                var ya = a.transform[5], yb = b.transform[5];
+                if (Math.abs(ya - yb) > 3) return yb - ya;
+                return a.transform[4] - b.transform[4];
+              });
+
+              var lastY = null;
+              var line = '';
+              for (var k = 0; k < items.length; k++) {
+                var y = items[k].transform[5];
+                if (lastY !== null && Math.abs(y - lastY) > 3) {
+                  full += line.trim() + '\n';
+                  line = '';
+                }
+                line += items[k].str + ' ';
+                lastY = y;
+              }
+              full += line.trim() + '\n';
+            });
+          });
+        });
+      })(i);
+    }
+
+    return chain.then(function () {
+      return full;
+    });
+  });
 }
 
 /* ---------- UI ---------- */
@@ -96,7 +137,7 @@ export function initPdfImport() {
     '<div class="import-panel">' +
       '<div class="import-panel-head">' +
         '<h3>Import from College Portal</h3>' +
-        '<p class="import-sub">Upload your SBMP attendance report (PDF). The site reads it and pre-fills the numbers — you review before saving. If parsing fails, enter the numbers manually.</p>' +
+        '<p class="import-sub">Upload your SBMP attendance report (PDF). The site reads it and pre-fills the numbers &mdash; you review before saving. If parsing fails, enter the numbers manually.</p>' +
       '</div>' +
       '<div class="import-actions">' +
         '<input type="file" id="pdf-file" accept="application/pdf" style="display:none">' +
@@ -125,18 +166,32 @@ export function initPdfImport() {
     loadPdfJs().then(function () {
       return readPdfText(file);
     }).then(function (text) {
-      var parsed = parseAttendanceText(text);
-      var nonEmpty = false;
-      var codes = Object.keys(parsed);
-      for (var i = 0; i < codes.length; i++) {
-        if (Object.keys(parsed[codes[i]]).length > 0) { nonEmpty = true; break; }
-      }
-      if (nonEmpty) {
-        var count = 0;
-        for (var j = 0; j < codes.length; j++) {
-          count += Object.keys(parsed[codes[j]]).length;
+      var normalized = normalize(text);
+      var parsed = {};
+
+      for (var i = 0; i < SUBJECT_ORDER.length; i++) {
+        var code = SUBJECT_ORDER[i];
+        var keywords = SUBJECT_KEYWORDS[code] || {};
+        var types = Object.keys(keywords);
+        if (types.length === 0) continue;
+
+        parsed[code] = {};
+        for (var t = 0; t < types.length; t++) {
+          var type = types[t];
+          var counts = findCounts(normalized, keywords[type]);
+          if (counts) parsed[code][type] = counts;
         }
-        status.textContent = 'PDF read — ' + count + ' values extracted. Please review before saving.';
+      }
+
+      /* Count how many values we got */
+      var total = 0;
+      var codes = Object.keys(parsed);
+      for (var c = 0; c < codes.length; c++) {
+        total += Object.keys(parsed[codes[c]]).length;
+      }
+
+      if (total > 0) {
+        status.textContent = 'PDF read — ' + total + ' values extracted. Please review before saving.';
         status.className = 'import-status ok';
         showForm(parsed, true);
       } else {
@@ -216,8 +271,6 @@ export function initPdfImport() {
   }
 }
 
-/* Reads every input, validates, and saves.
-   Rejects negative numbers, non-numeric values, and attended > total. */
 function saveFromForm(review, status) {
   var inputs = review.querySelectorAll('input[type="number"]');
   var grouped = {};
@@ -239,19 +292,15 @@ function saveFromForm(review, status) {
     grouped[code][type][field] = num;
   }
 
-  /* Validate: attended cannot exceed total. */
   var codes = Object.keys(grouped);
   for (var c = 0; c < codes.length; c++) {
     var code = codes[c];
     var types = Object.keys(grouped[code]);
     for (var t = 0; t < types.length; t++) {
-      var type = types[t];
-      var g = grouped[code][type];
-      if (g.attended !== undefined && g.total !== undefined) {
-        if (g.attended > g.total) {
-          showError(review, 'Attended cannot be greater than Total for ' + code + ' · ' + type + '.');
-          return;
-        }
+      var g = grouped[code][types[t]];
+      if (g.attended !== undefined && g.total !== undefined && g.attended > g.total) {
+        showError(review, 'Attended cannot be greater than Total for ' + code + ' · ' + types[t] + '.');
+        return;
       }
     }
   }
@@ -267,7 +316,6 @@ function saveFromForm(review, status) {
       if (g2.attended === undefined || g2.total === undefined) continue;
       if (g2.total === 0) continue;
 
-      /* Replace existing entries for this code/type with synthetic ones. */
       var arr = [];
       for (var n = 0; n < g2.total; n++) {
         arr.push({
@@ -294,46 +342,4 @@ function showError(review, message) {
   box.textContent = message;
   box.style.display = 'block';
   box.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-
-/* Reads PDF text, sorting items by Y (top to bottom) then X (left to right). */
-function readPdfText(file) {
-  return file.arrayBuffer().then(function (buf) {
-    return window.pdfjsLib.getDocument({ data: buf }).promise;
-  }).then(function (pdf) {
-    var pages = [];
-    for (var i = 1; i <= pdf.numPages; i++) pages.push(i);
-
-    var full = '';
-    var chain = Promise.resolve();
-
-    pages.forEach(function (pageNum) {
-      chain = chain.then(function () {
-        return pdf.getPage(pageNum).then(function (page) {
-          return page.getTextContent().then(function (content) {
-            var items = content.items.slice().sort(function (a, b) {
-              var ya = a.transform[5], yb = b.transform[5];
-              if (Math.abs(ya - yb) > 3) return yb - ya;
-              return a.transform[4] - b.transform[4];
-            });
-
-            var lastY = null;
-            var line = '';
-            for (var k = 0; k < items.length; k++) {
-              var y = items[k].transform[5];
-              if (lastY !== null && Math.abs(y - lastY) > 3) {
-                full += line.trim() + '\n';
-                line = '';
-              }
-              line += items[k].str + ' ';
-              lastY = y;
-            }
-            full += line.trim() + '\n';
-          });
-        });
-      });
-    });
-
-    return chain.then(function () { return full; });
-  });
 }
