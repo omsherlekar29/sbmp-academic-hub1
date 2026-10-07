@@ -1197,3 +1197,953 @@ html.splash-active .splash::before{
   .splash-divider{width:80px !important}
   .splash-bar-fill{width:100% !important}
 }
+
+/* ============================================================
+   PREMIUM ANIMATION LAYER — Team TechNova
+   Dramatic. Fluid. Consistent. Everywhere.
+   ============================================================ */
+
+/* ---------------- ENHANCED SPLASH ---------------- */
+html.splash-active .splash::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at center,transparent 30%,rgba(0,0,0,.6) 100%);
+  pointer-events:none;
+  animation:splashVignette 1400ms ease both;
+}
+@keyframes splashVignette{
+  from{opacity:0}
+  to{opacity:1}
+}
+
+.splash-banner{
+  animation:splashBannerIn 900ms cubic-bezier(.16,1,.3,1) 100ms both !important;
+}
+@keyframes splashBannerIn{
+  0%{opacity:0;transform:scale(.9) translateY(20px) rotate(-1deg)}
+  60%{opacity:1;transform:scale(1.015) translateY(-3px) rotate(.3deg)}
+  100%{opacity:1;transform:scale(1) translateY(0) rotate(0)}
+}
+
+.splash-team{
+  animation:splashTextGlow 900ms cubic-bezier(.16,1,.3,1) 400ms both !important;
+}
+@keyframes splashTextGlow{
+  0%{opacity:0;transform:translateY(14px);letter-spacing:.15em}
+  60%{opacity:1;letter-spacing:.04em}
+  100%{opacity:1;transform:translateY(0);letter-spacing:.01em}
+}
+
+.splash-bar-fill{
+  animation:splashBarProgress 1400ms cubic-bezier(.16,1,.3,1) 700ms forwards !important;
+  position:relative;
+}
+.splash-bar-fill::after{
+  content:'';position:absolute;
+  top:0;right:0;bottom:0;
+  width:30px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.6));
+  border-radius:2px;
+}
+@keyframes splashBarProgress{
+  from{width:0}
+  to{width:100%}
+}
+
+/* ---------------- HERO — dramatic entrance ---------------- */
+.hero-eyebrow{
+  animation:heroEyebrow 700ms cubic-bezier(.16,1,.3,1) 200ms both !important;
+}
+@keyframes heroEyebrow{
+  from{opacity:0;transform:translateX(-16px)}
+  to{opacity:1;transform:translateX(0)}
+}
+
+.hero h1{
+  animation:heroTitle 900ms cubic-bezier(.16,1,.3,1) 320ms both !important;
+}
+@keyframes heroTitle{
+  0%{opacity:0;transform:translateY(24px);filter:blur(6px)}
+  60%{opacity:1;filter:blur(0)}
+  100%{opacity:1;transform:translateY(0);filter:blur(0)}
+}
+
+.hero .lede{
+  animation:heroLede 900ms cubic-bezier(.16,1,.3,1) 460ms both !important;
+}
+@keyframes heroLede{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.hero-actions{
+  animation:heroActions 800ms cubic-bezier(.34,1.56,.64,1) 620ms both !important;
+}
+@keyframes heroActions{
+  0%{opacity:0;transform:scale(.94) translateY(12px)}
+  100%{opacity:1;transform:scale(1) translateY(0)}
+}
+
+#clock-host{
+  animation:clockSlide 1000ms cubic-bezier(.16,1,.3,1) 500ms both !important;
+}
+@keyframes clockSlide{
+  0%{opacity:0;transform:translateX(30px) scale(.96)}
+  100%{opacity:1;transform:translateX(0) scale(1)}
+}
+
+#exam-countdown{
+  animation:countSlide 900ms cubic-bezier(.16,1,.3,1) 720ms both !important;
+}
+@keyframes countSlide{
+  from{opacity:0;transform:translateY(18px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@media(max-width:900px){
+  #clock-host,#exam-countdown{animation:heroLede 800ms cubic-bezier(.16,1,.3,1) 500ms both !important}
+}
+
+/* ---------------- SECTION HEADINGS — draw-in accent ---------------- */
+.section-head h2::before{
+  transform-origin:top;
+  animation:accentDraw 600ms cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes accentDraw{
+  0%{height:0;opacity:0}
+  100%{height:28px;opacity:1}
+}
+
+/* ---------------- SCROLL REVEAL — more dramatic ---------------- */
+.anim-init{
+  opacity:0;
+  transform:translateY(24px) scale(.98);
+  transition:
+    opacity 700ms cubic-bezier(.16,1,.3,1),
+    transform 700ms cubic-bezier(.16,1,.3,1);
+  will-change:opacity, transform;
+}
+.anim-in{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  will-change:auto;
+}
+
+/* Stagger children when section enters */
+.stagger-init > *{
+  opacity:0;
+  transform:translateY(20px) scale(.97);
+  transition:
+    opacity 620ms cubic-bezier(.16,1,.3,1),
+    transform 620ms cubic-bezier(.16,1,.3,1);
+}
+.stagger-in > *:nth-child(1){transition-delay:0ms}
+.stagger-in > *:nth-child(2){transition-delay:70ms}
+.stagger-in > *:nth-child(3){transition-delay:140ms}
+.stagger-in > *:nth-child(4){transition-delay:210ms}
+.stagger-in > *:nth-child(5){transition-delay:280ms}
+.stagger-in > *:nth-child(6){transition-delay:350ms}
+.stagger-in > *:nth-child(7){transition-delay:420ms}
+.stagger-in > *:nth-child(8){transition-delay:490ms}
+.stagger-in > *{
+  opacity:1;
+  transform:translateY(0) scale(1);
+}
+
+/* ---------------- CARD HOVER — richer ---------------- */
+.card,
+.quick-tile,
+.subject-card,
+.resource-card,
+.team-card,
+.stat-block,
+.calendar-card{
+  transition:
+    transform 420ms cubic-bezier(.16,1,.3,1),
+    box-shadow 420ms cubic-bezier(.16,1,.3,1),
+    border-color 300ms cubic-bezier(.16,1,.3,1),
+    background-color 320ms cubic-bezier(.16,1,.3,1) !important;
+}
+
+.card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 20px 44px rgba(10,31,74,.14) !important;
+}
+.quick-tile:hover{
+  transform:translateY(-5px);
+  box-shadow:0 22px 48px rgba(10,31,74,.16) !important;
+}
+.quick-tile:hover .qt-icon{
+  transform:scale(1.1) rotate(-4deg);
+  transition:transform 500ms cubic-bezier(.34,1.56,.64,1);
+}
+.subject-card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 22px 48px rgba(10,31,74,.16) !important;
+}
+.resource-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 16px 40px rgba(10,31,74,.14) !important;
+}
+.team-card:hover{
+  transform:translateY(-5px);
+}
+.team-card:hover .team-avatar{
+  transform:scale(1.08) rotate(-3deg);
+  transition:transform 500ms cubic-bezier(.34,1.56,.64,1);
+}
+.stat-block:hover{
+  transform:translateY(-4px);
+}
+.stat-block:hover .stat-value{
+  animation:statPop 400ms cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes statPop{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.08)}
+  100%{transform:scale(1)}
+}
+
+/* ---------------- BUTTONS — shimmer sweep ---------------- */
+.btn{
+  position:relative;
+  overflow:hidden;
+  transition:
+    transform 320ms cubic-bezier(.16,1,.3,1),
+    box-shadow 320ms cubic-bezier(.16,1,.3,1),
+    background-color 280ms cubic-bezier(.16,1,.3,1),
+    border-color 280ms cubic-bezier(.16,1,.3,1),
+    color 280ms cubic-bezier(.16,1,.3,1) !important;
+}
+.btn::after{
+  content:'';
+  position:absolute;
+  top:0;left:-120%;
+  width:80%;height:100%;
+  background:linear-gradient(120deg,transparent 20%,rgba(255,255,255,.28) 50%,transparent 80%);
+  transform:skewX(-20deg);
+  transition:left 800ms cubic-bezier(.16,1,.3,1);
+  pointer-events:none;
+}
+.btn:hover::after{left:140%}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0) scale(.98);transition-duration:100ms !important}
+.btn-primary:hover{box-shadow:0 14px 36px rgba(10,31,74,.30)}
+.btn-gold:hover{box-shadow:0 16px 40px rgba(193,154,63,.38)}
+
+/* ---------------- NOTICE CARD — slide in ---------------- */
+.notice-item{
+  transition:
+    transform 420ms cubic-bezier(.16,1,.3,1),
+    box-shadow 420ms cubic-bezier(.16,1,.3,1),
+    border-color 320ms cubic-bezier(.16,1,.3,1),
+    border-left-color 320ms cubic-bezier(.16,1,.3,1) !important;
+}
+.notice-item:hover{transform:translateX(8px)}
+
+/* ---------------- NAV UNDERLINE — smoother ---------------- */
+.nav-link{
+  position:relative;
+  transition:background-color 200ms cubic-bezier(.16,1,.3,1),
+             color 200ms cubic-bezier(.16,1,.3,1) !important;
+}
+.nav-link::before{
+  content:'';
+  position:absolute;
+  bottom:6px;left:50%;
+  transform:translateX(-50%) scaleX(0);
+  transform-origin:center;
+  width:20px;height:2px;
+  background:var(--gold);
+  border-radius:2px;
+  transition:transform 320ms cubic-bezier(.34,1.56,.64,1);
+}
+.nav-link:hover::before,
+.nav-link.active::before{
+  transform:translateX(-50%) scaleX(1);
+}
+.nav-link.active::after{display:none}
+
+/* ---------------- MODAL / DROPDOWN — spring in ---------------- */
+.nav-drop-menu.open{
+  animation:dropdownSpring 380ms cubic-bezier(.34,1.56,.64,1) both !important;
+}
+@keyframes dropdownSpring{
+  0%{opacity:0;transform:translateY(-12px) scale(.95)}
+  100%{opacity:1;transform:translateY(0) scale(1)}
+}
+
+/* ---------------- TIMETABLE — smooth cell reveal ---------------- */
+.tt-td{
+  transition:
+    background-color 320ms cubic-bezier(.16,1,.3,1),
+    transform 320ms cubic-bezier(.34,1.56,.64,1) !important;
+}
+.tt-td:hover{
+  transform:scale(1.018);
+  z-index:2;
+  position:relative;
+}
+
+/* Lab cells — subtle gradient shift on hover */
+.tt-td.lab-cell:hover{
+  background:linear-gradient(180deg,#e6ecfa 0%,#d0def4 100%) !important;
+}
+
+/* ---------------- ACCORDION — smooth slide ---------------- */
+.unit .unit-body{
+  animation:accordionSlide 480ms cubic-bezier(.16,1,.3,1) both !important;
+}
+@keyframes accordionSlide{
+  0%{opacity:0;transform:translateY(-10px);max-height:0}
+  100%{opacity:1;transform:translateY(0);max-height:2000px}
+}
+
+.unit summary:hover{
+  background:linear-gradient(90deg,rgba(193,154,63,.04) 0%,transparent 100%);
+}
+.unit summary .unit-no{
+  transition:transform 400ms cubic-bezier(.34,1.56,.64,1),
+             background-color 300ms cubic-bezier(.16,1,.3,1) !important;
+}
+.unit[open] summary .unit-no{
+  transform:rotate(-8deg) scale(1.05);
+  background:var(--gold-soft);
+  color:var(--gold-hover);
+}
+
+/* ---------------- TASK ITEM — graceful appear ---------------- */
+.task-item{
+  animation:taskAppear 480ms cubic-bezier(.16,1,.3,1) both !important;
+}
+@keyframes taskAppear{
+  0%{opacity:0;transform:translateX(-12px)}
+  100%{opacity:1;transform:translateX(0)}
+}
+
+/* ---------------- RESOURCE ICON — playful hover ---------------- */
+.res-icon{
+  transition:transform 480ms cubic-bezier(.34,1.56,.64,1),
+             background-color 320ms cubic-bezier(.16,1,.3,1),
+             color 320ms cubic-bezier(.16,1,.3,1) !important;
+}
+.resource-card:hover .res-icon{
+  transform:rotate(-5deg) scale(1.08);
+}
+
+/* ---------------- INPUT FOCUS — soft glow ---------------- */
+input:focus,select:focus,textarea:focus{
+  box-shadow:0 0 0 4px var(--primary-glow) !important;
+  transition:all 260ms cubic-bezier(.16,1,.3,1) !important;
+}
+
+/* ---------------- QR BLOCK — gentle float ---------------- */
+.qr-img{
+  transition:transform 500ms cubic-bezier(.16,1,.3,1),
+             box-shadow 500ms cubic-bezier(.16,1,.3,1) !important;
+  animation:qrFloat 4s ease-in-out infinite;
+}
+@keyframes qrFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-4px)}
+}
+.qr-img:hover{animation:none;transform:translateY(-5px) scale(1.03)}
+
+/* ---------------- STAT VALUE — counter pop ---------------- */
+.stat-value{
+  transition:color 400ms cubic-bezier(.16,1,.3,1) !important;
+}
+
+/* ---------------- FOOTER LINKS — smooth slide ---------------- */
+.footer-links a{
+  transition:color 220ms cubic-bezier(.16,1,.3,1),
+             padding-left 320ms cubic-bezier(.16,1,.3,1) !important;
+}
+
+/* ---------------- TABLE ROWS ---------------- */
+table.data tbody tr{
+  transition:background-color 260ms cubic-bezier(.16,1,.3,1),
+             transform 320ms cubic-bezier(.16,1,.3,1) !important;
+}
+table.data tbody tr:hover{transform:translateX(3px)}
+
+/* ---------------- BADGE ---------------- */
+.badge{
+  transition:transform 260ms cubic-bezier(.34,1.56,.64,1),
+             background-color 260ms cubic-bezier(.16,1,.3,1),
+             color 260ms cubic-bezier(.16,1,.3,1) !important;
+}
+.badge:hover{transform:scale(1.05)}
+
+/* ---------------- CLOCK CARD — subtle entrance pulse ---------------- */
+.clock-card{
+  animation:clockCardPulse 800ms cubic-bezier(.16,1,.3,1) both !important;
+}
+@keyframes clockCardPulse{
+  0%{opacity:0;transform:translateX(24px) scale(.95)}
+  60%{opacity:1;transform:translateX(0) scale(1.015)}
+  100%{opacity:1;transform:translateX(0) scale(1)}
+}
+
+/* ---------------- BACKGROUND FLOATING GRADIENTS ---------------- */
+.hero::after{
+  content:'';position:absolute;
+  top:20%;left:8%;
+  width:180px;height:180px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(193,154,63,.08),transparent 70%);
+  filter:blur(40px);
+  animation:floatOrb 12s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes floatOrb{
+  0%,100%{transform:translate(0,0) scale(1)}
+  50%{transform:translate(30px,-20px) scale(1.15)}
+}
+
+/* ---------------- REDUCED MOTION — kill everything ---------------- */
+@media (prefers-reduced-motion: reduce){
+  *,
+  *::before,
+  *::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+}
+
+/* ============================================================
+   PREMIUM ANIMATION LAYER v2 — Team TechNova
+   More dramatic. More fluid. More consistent.
+   ============================================================ */
+
+/* ---------------- GLOBAL EASING ---------------- */
+:root{
+  --premium:cubic-bezier(.16,1,.3,1);
+  --premium-spring:cubic-bezier(.34,1.56,.64,1);
+  --premium-smooth:cubic-bezier(.25,.8,.25,1);
+}
+
+/* ---------------- HERO — dramatic blur-in ---------------- */
+.hero-eyebrow{
+  animation:heroEyebrow 800ms var(--premium) 200ms both !important;
+}
+@keyframes heroEyebrow{
+  0%{opacity:0;transform:translateX(-20px)}
+  100%{opacity:1;transform:translateX(0)}
+}
+
+.hero h1{
+  animation:heroTitleBlur 1100ms var(--premium) 340ms both !important;
+}
+@keyframes heroTitleBlur{
+  0%{opacity:0;transform:translateY(28px);filter:blur(10px)}
+  60%{opacity:1;filter:blur(0)}
+  100%{opacity:1;transform:translateY(0);filter:blur(0)}
+}
+
+.hero .lede{
+  animation:heroLedeSlide 1000ms var(--premium) 500ms both !important;
+}
+@keyframes heroLedeSlide{
+  0%{opacity:0;transform:translateY(20px)}
+  100%{opacity:1;transform:translateY(0)}
+}
+
+.hero-actions{
+  animation:heroActionsPop 900ms var(--premium-spring) 660ms both !important;
+}
+@keyframes heroActionsPop{
+  0%{opacity:0;transform:scale(.9) translateY(16px)}
+  100%{opacity:1;transform:scale(1) translateY(0)}
+}
+
+#clock-host{
+  animation:clockSlideRight 1100ms var(--premium) 520ms both !important;
+}
+@keyframes clockSlideRight{
+  0%{opacity:0;transform:translateX(40px) scale(.94) rotateY(-8deg)}
+  100%{opacity:1;transform:translateX(0) scale(1) rotateY(0)}
+}
+
+#exam-countdown{
+  animation:countRise 900ms var(--premium) 780ms both !important;
+}
+@keyframes countRise{
+  0%{opacity:0;transform:translateY(24px)}
+  100%{opacity:1;transform:translateY(0)}
+}
+
+@media(max-width:900px){
+  #clock-host,#exam-countdown{
+    animation:heroLedeSlide 800ms var(--premium) 500ms both !important;
+  }
+}
+
+/* ---------------- FLOATING BACKGROUND ORBS ---------------- */
+.hero::after{
+  content:'';position:absolute;
+  top:15%;left:6%;
+  width:220px;height:220px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(193,154,63,.10),transparent 70%);
+  filter:blur(50px);
+  animation:floatOrb1 14s ease-in-out infinite;
+  pointer-events:none;z-index:0;
+}
+.hero::before{
+  content:'';position:absolute;
+  bottom:5%;right:8%;
+  width:260px;height:260px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(10,31,74,.08),transparent 70%);
+  filter:blur(60px);
+  animation:floatOrb2 18s ease-in-out infinite;
+  pointer-events:none;z-index:0;
+  height:auto;border:none;background-color:transparent;
+}
+@keyframes floatOrb1{
+  0%,100%{transform:translate(0,0) scale(1)}
+  50%{transform:translate(40px,-30px) scale(1.15)}
+}
+@keyframes floatOrb2{
+  0%,100%{transform:translate(0,0) scale(1)}
+  50%{transform:translate(-30px,20px) scale(1.2)}
+}
+.hero-grid,.hero .container{position:relative;z-index:1}
+
+/* ---------------- SPLASH — cinematic reveal ---------------- */
+.splash-banner{
+  animation:splashBannerIn 1000ms var(--premium) 100ms both !important;
+}
+@keyframes splashBannerIn{
+  0%{opacity:0;transform:scale(.88) translateY(30px) rotate(-1.5deg);filter:blur(8px)}
+  60%{opacity:1;transform:scale(1.02) translateY(-4px) rotate(.4deg);filter:blur(0)}
+  100%{opacity:1;transform:scale(1) translateY(0) rotate(0);filter:blur(0)}
+}
+
+.splash-team{
+  animation:splashTextExpand 1100ms var(--premium) 420ms both !important;
+}
+@keyframes splashTextExpand{
+  0%{opacity:0;transform:translateY(18px);letter-spacing:.22em}
+  60%{opacity:1;letter-spacing:.05em}
+  100%{opacity:1;transform:translateY(0);letter-spacing:.01em}
+}
+
+.splash-divider{
+  animation:splashDividerGrow 900ms var(--premium) 560ms forwards !important;
+}
+@keyframes splashDividerGrow{
+  0%{width:0;box-shadow:none}
+  60%{box-shadow:0 0 20px rgba(224,181,88,.7)}
+  100%{width:80px;box-shadow:0 0 14px rgba(224,181,88,.5)}
+}
+
+.splash-project{
+  animation:splashProjectFade 900ms var(--premium) 700ms both !important;
+}
+@keyframes splashProjectFade{
+  0%{opacity:0;letter-spacing:.4em}
+  100%{opacity:1;letter-spacing:.32em}
+}
+
+.splash-bar-fill{
+  animation:splashBarProgress 1400ms var(--premium) 780ms forwards !important;
+  position:relative;
+}
+.splash-bar-fill::after{
+  content:'';position:absolute;
+  top:0;right:0;bottom:0;
+  width:40px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.7));
+  border-radius:2px;
+  animation:splashBarShine 900ms ease-in-out infinite;
+}
+@keyframes splashBarShine{
+  0%,100%{opacity:.4}
+  50%{opacity:1}
+}
+@keyframes splashBarProgress{
+  from{width:0}
+  to{width:100%}
+}
+
+/* Ambient gold ring behind banner */
+html.splash-active .splash-inner::before{
+  content:'';position:absolute;
+  top:-40px;left:50%;
+  transform:translateX(-50%);
+  width:340px;height:340px;
+  border-radius:50%;
+  border:1px solid rgba(193,154,63,.20);
+  animation:splashRingExpand 1800ms var(--premium) 100ms both;
+  pointer-events:none;
+}
+@keyframes splashRingExpand{
+  0%{opacity:0;transform:translateX(-50%) scale(.6)}
+  100%{opacity:1;transform:translateX(-50%) scale(1)}
+}
+
+/* ---------------- SCROLL REVEAL — dramatic ---------------- */
+.anim-init{
+  opacity:0;
+  transform:translateY(30px) scale(.97);
+  filter:blur(4px);
+  transition:
+    opacity 800ms var(--premium),
+    transform 800ms var(--premium),
+    filter 800ms var(--premium);
+  will-change:opacity, transform, filter;
+}
+.anim-in{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  filter:blur(0);
+  will-change:auto;
+}
+
+/* ---------------- STAGGER — richer cascade ---------------- */
+.stagger-init > *{
+  opacity:0;
+  transform:translateY(24px) scale(.96);
+  transition:
+    opacity 640ms var(--premium),
+    transform 640ms var(--premium);
+}
+.stagger-in > *:nth-child(1){transition-delay:0ms}
+.stagger-in > *:nth-child(2){transition-delay:80ms}
+.stagger-in > *:nth-child(3){transition-delay:160ms}
+.stagger-in > *:nth-child(4){transition-delay:240ms}
+.stagger-in > *:nth-child(5){transition-delay:320ms}
+.stagger-in > *:nth-child(6){transition-delay:400ms}
+.stagger-in > *:nth-child(7){transition-delay:480ms}
+.stagger-in > *:nth-child(8){transition-delay:560ms}
+.stagger-in > *:nth-child(9){transition-delay:640ms}
+.stagger-in > *:nth-child(10){transition-delay:720ms}
+.stagger-in > *:nth-child(11){transition-delay:800ms}
+.stagger-in > *:nth-child(12){transition-delay:880ms}
+.stagger-in > *{
+  opacity:1;
+  transform:translateY(0) scale(1);
+}
+
+/* ---------------- CARD HOVER — deeper lift + glow ---------------- */
+.card,
+.quick-tile,
+.subject-card,
+.resource-card,
+.team-card,
+.stat-block,
+.calendar-card,
+.notice-item{
+  transition:
+    transform 500ms var(--premium),
+    box-shadow 500ms var(--premium),
+    border-color 320ms var(--premium),
+    background-color 320ms var(--premium) !important;
+  will-change:transform;
+}
+
+.card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 24px 52px rgba(10,31,74,.16) !important;
+}
+.quick-tile:hover{
+  transform:translateY(-6px);
+  box-shadow:0 26px 56px rgba(10,31,74,.18) !important;
+}
+.quick-tile:hover .qt-icon{
+  transform:scale(1.12) rotate(-5deg);
+  transition:transform 550ms var(--premium-spring) !important;
+}
+.subject-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 26px 56px rgba(10,31,74,.18) !important;
+}
+.subject-card:hover h3{
+  color:var(--primary);
+  transition:color 320ms var(--premium) !important;
+}
+.resource-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 20px 46px rgba(10,31,74,.16) !important;
+}
+.resource-card:hover .res-icon{
+  transform:rotate(-6deg) scale(1.1);
+  transition:transform 550ms var(--premium-spring) !important;
+}
+.resource-card:hover .res-arrow{
+  transform:translateX(6px) scale(1.05);
+  transition:transform 480ms var(--premium-spring) !important;
+}
+.team-card:hover{
+  transform:translateY(-6px);
+}
+.team-card:hover .team-avatar{
+  transform:scale(1.1) rotate(-4deg);
+  transition:transform 550ms var(--premium-spring) !important;
+  box-shadow:0 14px 32px rgba(10,31,74,.30) !important;
+}
+.stat-block:hover{
+  transform:translateY(-5px);
+}
+.stat-block:hover .stat-value{
+  animation:statPop 500ms var(--premium-spring);
+}
+@keyframes statPop{
+  0%{transform:scale(1)}
+  40%{transform:scale(1.12);color:var(--gold-hover)}
+  100%{transform:scale(1)}
+}
+.calendar-card:hover{
+  transform:translateY(-5px) rotate(-.3deg);
+}
+.notice-item:hover{
+  transform:translateX(10px);
+}
+
+/* ---------------- BUTTON — golden shimmer sweep ---------------- */
+.btn{
+  position:relative;
+  overflow:hidden;
+  transition:
+    transform 380ms var(--premium),
+    box-shadow 380ms var(--premium),
+    background-color 320ms var(--premium),
+    border-color 320ms var(--premium),
+    color 320ms var(--premium) !important;
+}
+.btn::after{
+  content:'';
+  position:absolute;
+  top:0;left:-150%;
+  width:100%;height:100%;
+  background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%);
+  transform:skewX(-20deg);
+  transition:left 900ms var(--premium);
+  pointer-events:none;
+}
+.btn:hover::after{left:150%}
+.btn:hover{transform:translateY(-3px)}
+.btn:active{transform:translateY(0) scale(.97);transition-duration:100ms !important}
+.btn-primary:hover{box-shadow:0 16px 40px rgba(10,31,74,.32) !important}
+.btn-gold:hover{box-shadow:0 18px 46px rgba(193,154,63,.42) !important}
+.btn-secondary:hover{
+  background:var(--primary-soft);
+  border-color:var(--primary);
+  color:var(--primary);
+  box-shadow:0 12px 32px rgba(10,31,74,.14) !important;
+}
+
+/* ---------------- NAV — animated gold underline ---------------- */
+.nav-link{
+  position:relative;
+  transition:
+    background-color 240ms var(--premium),
+    color 240ms var(--premium) !important;
+}
+.nav-link::before{
+  content:'';
+  position:absolute;
+  bottom:5px;left:50%;
+  transform:translateX(-50%) scaleX(0);
+  transform-origin:center;
+  width:22px;height:2px;
+  background:var(--gold);
+  border-radius:2px;
+  transition:transform 400ms var(--premium-spring);
+}
+.nav-link:hover::before,
+.nav-link.active::before{
+  transform:translateX(-50%) scaleX(1);
+}
+.nav-link.active::after{display:none}
+
+/* ---------------- DROPDOWN — spring in ---------------- */
+.nav-drop-menu.open{
+  animation:dropdownSpring 420ms var(--premium-spring) both !important;
+}
+@keyframes dropdownSpring{
+  0%{opacity:0;transform:translateY(-16px) scale(.92)}
+  100%{opacity:1;transform:translateY(0) scale(1)}
+}
+.nav-drop-link{
+  transition:
+    background-color 240ms var(--premium),
+    color 240ms var(--premium),
+    padding-left 320ms var(--premium) !important;
+}
+
+/* ---------------- ACCORDION ---------------- */
+.unit summary{
+  transition:
+    background-color 400ms var(--premium),
+    padding 400ms var(--premium) !important;
+}
+.unit summary:hover{
+  background:linear-gradient(90deg,rgba(193,154,63,.06) 0%,transparent 100%);
+}
+.unit .unit-body{
+  animation:accordionSlideDown 500ms var(--premium) both !important;
+}
+@keyframes accordionSlideDown{
+  0%{opacity:0;transform:translateY(-12px)}
+  100%{opacity:1;transform:translateY(0)}
+}
+.unit .unit-no{
+  transition:
+    transform 500ms var(--premium-spring),
+    background-color 320ms var(--premium),
+    color 320ms var(--premium) !important;
+}
+.unit[open] summary .unit-no{
+  transform:rotate(-8deg) scale(1.08);
+  background:var(--gold-soft);
+  color:var(--gold-hover);
+}
+
+/* ---------------- TASK ITEM — left slide ---------------- */
+.task-item{
+  animation:taskSlideIn 520ms var(--premium) both !important;
+}
+@keyframes taskSlideIn{
+  0%{opacity:0;transform:translateX(-18px)}
+  100%{opacity:1;transform:translateX(0)}
+}
+
+/* ---------------- TIMETABLE CELL ---------------- */
+.tt-td{
+  transition:
+    background-color 320ms var(--premium),
+    transform 380ms var(--premium-spring),
+    box-shadow 320ms var(--premium) !important;
+}
+.tt-td:hover{
+  transform:scale(1.02);
+  z-index:2;
+  position:relative;
+  box-shadow:0 8px 22px rgba(10,31,74,.10);
+}
+.tt-td.lab-cell:hover{
+  background:linear-gradient(180deg,#e6ecfa 0%,#d0def4 100%) !important;
+}
+
+/* ---------------- INPUTS — soft glow ---------------- */
+input:focus,
+select:focus,
+textarea:focus{
+  box-shadow:0 0 0 4px var(--primary-glow) !important;
+  transform:translateY(-1px);
+  transition:
+    box-shadow 320ms var(--premium),
+    border-color 240ms var(--premium),
+    transform 320ms var(--premium) !important;
+}
+
+/* ---------------- QR FLOAT ---------------- */
+.qr-img{
+  animation:qrFloat 4.5s ease-in-out infinite;
+  transition:transform 500ms var(--premium), box-shadow 500ms var(--premium) !important;
+}
+@keyframes qrFloat{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-5px)}
+}
+.qr-img:hover{
+  animation:none;
+  transform:translateY(-6px) scale(1.04);
+  box-shadow:0 24px 56px rgba(10,31,74,.22) !important;
+}
+
+/* ---------------- TABLE ROWS ---------------- */
+table.data tbody tr{
+  transition:
+    background-color 320ms var(--premium),
+    transform 380ms var(--premium) !important;
+}
+table.data tbody tr:hover{
+  transform:translateX(3px);
+}
+
+/* ---------------- BADGE ---------------- */
+.badge{
+  transition:
+    transform 320ms var(--premium-spring),
+    background-color 320ms var(--premium),
+    color 320ms var(--premium) !important;
+}
+.badge:hover{transform:scale(1.06)}
+
+/* ---------------- FOOTER LINKS ---------------- */
+.footer-links a{
+  transition:
+    color 260ms var(--premium),
+    padding-left 380ms var(--premium),
+    letter-spacing 380ms var(--premium) !important;
+}
+.footer-links a:hover{
+  padding-left:8px;
+  letter-spacing:.005em;
+}
+
+/* ---------------- CLOCK CARD — entrance ---------------- */
+.clock-card{
+  animation:clockCardIn 1000ms var(--premium) both !important;
+}
+@keyframes clockCardIn{
+  0%{opacity:0;transform:translateX(30px) scale(.94)}
+  60%{opacity:1;transform:translateX(0) scale(1.02)}
+  100%{opacity:1;transform:translateX(0) scale(1)}
+}
+
+/* ---------------- NOTICE CALENDAR BUTTON ---------------- */
+.notice-cal-btn,
+.calendar-add-btn{
+  transition:
+    transform 320ms var(--premium-spring),
+    background-color 320ms var(--premium),
+    color 320ms var(--premium),
+    border-color 320ms var(--premium) !important;
+}
+.notice-cal-btn:hover,
+.calendar-add-btn:hover{
+  transform:translateY(-2px) scale(1.03);
+}
+
+/* ---------------- RESOURCE ICON ---------------- */
+.res-icon{
+  transition:
+    transform 500ms var(--premium-spring),
+    background-color 320ms var(--premium),
+    color 320ms var(--premium) !important;
+}
+
+/* ---------------- SECTION HEADING ACCENT ---------------- */
+.section-head h2::before{
+  animation:accentGrow 700ms var(--premium) both;
+}
+@keyframes accentGrow{
+  0%{height:0;opacity:0;box-shadow:none}
+  70%{box-shadow:0 0 20px var(--gold-glow)}
+  100%{height:28px;opacity:1;box-shadow:0 0 14px var(--gold-glow)}
+}
+
+/* ---------------- REDUCED MOTION — respect ---------------- */
+@media (prefers-reduced-motion: reduce){
+  *,
+  *::before,
+  *::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+    scroll-behavior:auto !important;
+  }
+  .anim-init,
+  .anim-in,
+  .stagger-init > *,
+  .stagger-in > *{
+    opacity:1 !important;
+    transform:none !important;
+    filter:none !important;
+  }
+}

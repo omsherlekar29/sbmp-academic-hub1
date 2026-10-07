@@ -22,43 +22,33 @@ function loadPdfJs() {
   });
 }
 
-/* ================================================================
-   PARSER
-   Matches the exact SBMP attendance report format:
+/* Detect which subject a row belongs to. Uses distinctive fragments. */
+function detectSubject(rowText) {
+  if (/MATHEMATICS/i.test(rowText)) return 'EMT268901';
+  if (/GRAPHICS/i.test(rowText)) return 'ENG268904';
+  if (/APPLIED\s+SCIENCE/i.test(rowText)) return 'ASC268902';
+  if (/COMMUNICATION/i.test(rowText)) return 'CMS268903';
+  if (/FUNDAMENTALS|COMPUTIN/i.test(rowText)) return 'FCS260801';
+  if (/UNIVERSAL/i.test(rowText)) return 'UHV268905';
+  if (/WEBSITE/i.test(rowText)) return 'WSD260802';
+  return null;
+}
 
-   Each row starts with an S.No (1-14), followed by:
-   - Subject name (may be wrapped across lines)
-   - Total Conducted
-   - Total Attended
-   - Optional Percentage (decimal)
-   - Class type marker (TH-CSE-B / PR-CSE-B-S2 / TU-CSE-B)
-     which may appear on the same line or wrap to a following line.
+/* ================================================================
+   PARSER — designed for the SBMP attendance report format
 
    Strategy:
-   1. Split into lines
-   2. Group lines into "rows" — each row begins with a line starting
-      with an S.No
-   3. For each row: detect subject, class type, and the last two integers
+   1. Split text into lines, then group into "rows".
+      A row starts with an S.No (1-30) and includes all following
+      lines until the next S.No.
+   2. In each row, find the type marker:
+        TH-CSE-B  → Theory
+        TU-CSE-B  → Tutorial
+        PR-CSE-B-S2 → Practical (S2 batch)
+   3. Take the two integers IMMEDIATELY before the marker.
+      Strip decimals first (percentages like 97.78).
+   4. Validate: attended <= total, both positive, total <= 300.
    ================================================================ */
-
-function detectSubject(rowText) {
-  if (/\bMATHEMATICS\b/i.test(rowText)) return 'EMT268901';
-  if (/\bGRAPHICS\b/i.test(rowText)) return 'ENG268904';
-  if (/\bAPPLIED\b/i.test(rowText)) return 'ASC268902';
-  if (/\bCOMMUNICATION\b/i.test(rowText)) return 'CMS268903';
-  if (/\bFUNDAMENTALS\b/i.test(rowText)) return 'FCS260801';
-  if (/\bUNIVERSAL\b/i.test(rowText)) return 'UHV268905';
-  if (/\bWEBSITE\b/i.test(rowText)) return 'WSD260802';
-  return null;
-}
-
-function detectType(rowText) {
-  if (/\bTH-CSE-B\b/i.test(rowText)) return 'TH';
-  if (/\bTU-CSE-B\b/i.test(rowText)) return 'TU';
-  if (/\bPR-CSE-B\b/i.test(rowText)) return 'PR';
-  return null;
-}
-
 function parseReport(text) {
   var lines = text.split('\n');
   var cleaned = [];
@@ -67,10 +57,9 @@ function parseReport(text) {
     if (l.length > 0) cleaned.push(l);
   }
 
-  /* Group into rows */
+  /* Group lines into rows */
   var rows = [];
   var current = null;
-
   for (var j = 0; j < cleaned.length; j++) {
     var line = cleaned[j];
     var sNoMatch = line.match(/^(\d{1,2})\s/);
@@ -88,37 +77,38 @@ function parseReport(text) {
 
   console.log('[pdf-import] Rows grouped:', rows.length);
 
-  /* Process rows */
   var result = {};
 
   for (var r = 0; r < rows.length; r++) {
     var row = rows[r];
-    var code = detectSubject(row);
-    var type = detectType(row);
 
-    if (!code || !type) {
-      console.log('[pdf-import] Skipped row:', row.substring(0, 60));
-      continue;
-    }
+    /* Which type marker is in this row? */
+    var type = null;
+    var markerIdx = -1;
 
-    /* Remove class markers and decimal percentages before extracting numbers */
-    var prepared = row
-      .replace(/TH-CSE-B/gi, ' ')
-      .replace(/TU-CSE-B/gi, ' ')
-      .replace(/PR-CSE-B-S2/gi, ' ')
-      .replace(/PR-CSE-B/gi, ' ')
-      .replace(/\d+\.\d+/g, ' ');
+    var ppr = row.search(/PR-CSE-B-S2/);
+    var th = row.search(/TH-CSE-B/);
+    var tu = row.search(/TU-CSE-B/);
 
-    var nums = prepared.match(/\d+/g) || [];
-    nums = nums.map(Number);
+    if (ppr > -1) { type = 'PR'; markerIdx = ppr; }
+    else if (th > -1) { type = 'TH'; markerIdx = th; }
+    else if (tu > -1) { type = 'TU'; markerIdx = tu; }
 
-    /* First number is the S.No — drop it. Last two are total + attended. */
-    if (nums.length < 3) {
-      console.log('[pdf-import] Not enough numbers in row:', row.substring(0, 60), nums);
-      continue;
-    }
+    if (!type) continue;
 
-    var lastTwo = nums.slice(-2);
+    /* Look at the 60 chars immediately before the type marker */
+    var startIdx = Math.max(0, markerIdx - 60);
+    var chunk = row.substring(startIdx, markerIdx);
+
+    /* Remove decimal percentages first — 97.78 → removed */
+    chunk = chunk.replace(/\d+\.\d+/g, ' ');
+
+    /* Extract remaining integers */
+    var nums = chunk.match(/\d+/g);
+    if (!nums || nums.length < 2) continue;
+
+    /* Last two integers before the marker are (Total, Attended) */
+    var lastTwo = nums.slice(-2).map(Number);
     var total = lastTwo[0];
     var attended = lastTwo[1];
 
@@ -126,10 +116,16 @@ function parseReport(text) {
     if (total < 1 || total > 300) continue;
     if (attended < 0 || attended > total) continue;
 
-    if (!result[code]) result[code] = {};
-    result[code][type] = { total: total, attended: attended };
+    /* Detect subject from the row text */
+    var code = detectSubject(row);
+    if (!code) continue;
 
-    console.log('[pdf-import] Matched', code, type, '→', attended + '/' + total);
+    if (!result[code]) result[code] = {};
+    /* Don't overwrite if already set (prevents PR-CSE-B from matching PR-CSE-B-S2 rows) */
+    if (!result[code][type]) {
+      result[code][type] = { total: total, attended: attended };
+      console.log('[pdf-import] Matched', code, type, '→', attended + '/' + total);
+    }
   }
 
   return result;
@@ -298,10 +294,7 @@ function saveFromForm(review, status) {
     var v = inp.value.trim();
     if (v === '') continue;
     var num = parseInt(v, 10);
-    if (isNaN(num) || num < 0) {
-      showError(review, 'Invalid value: "' + v + '".');
-      return;
-    }
+    if (isNaN(num) || num < 0) { showError(review, 'Invalid value: "' + v + '".'); return; }
     var code = inp.getAttribute('data-code');
     var type = inp.getAttribute('data-type');
     var field = inp.getAttribute('data-field');
