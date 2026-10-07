@@ -1,15 +1,9 @@
 /* SBMP Academic Hub · Team TechNova · (c) 2026 */
 
-import { SUBJECTS, SUBJECT_ORDER } from '../data/subjects.js';
+import { SUBJECTS } from '../data/subjects.js';
 import { SUBJECT_COLORS } from '../data/timetable.js';
 import { NOTES } from '../data/notes.js';
 import { initSubjectAttendance } from './attendance.js';
-
-function subjPrefix() {
-  var p = window.location.pathname;
-  if (p.indexOf('/pages/') > -1 || p.indexOf('/subjects/') > -1) return '../';
-  return '';
-}
 
 function escapeHTML(s) {
   if (!s) return '';
@@ -18,72 +12,22 @@ function escapeHTML(s) {
   });
 }
 
-/* ---------------- SUBJECT DIRECTORY ---------------- */
-export function initSubjectDirectory() {
-  var host = document.getElementById('subjects-grid');
-  console.log('[subjects] initSubjectDirectory called. Host found:', !!host);
-  console.log('[subjects] current path:', window.location.pathname);
-  console.log('[subjects] prefix:', subjPrefix());
-
-  if (!host) return;
-
-  var search = document.getElementById('subject-search');
-  var prefix = subjPrefix();
-
-  function render(q) {
-    var query = (q || '').toLowerCase();
-    var list = [];
-    for (var i = 0; i < SUBJECT_ORDER.length; i++) {
-      var code = SUBJECT_ORDER[i];
-      var s = SUBJECTS[code];
-      if (!query || s.name.toLowerCase().indexOf(query) > -1 || code.toLowerCase().indexOf(query) > -1) {
-        list.push(code);
-      }
-    }
-    if (list.length === 0) {
-      host.innerHTML = '<div class="task-empty" style="grid-column:1/-1;">No subjects match your search.</div>';
-      return;
-    }
-
-    var html = '';
-    for (var j = 0; j < list.length; j++) {
-      var c = list[j];
-      var sub = SUBJECTS[c];
-      var color = SUBJECT_COLORS[c] || '#0a1f4a';
-      var href = prefix + 'subjects/' + sub.slug + '.html';
-      if (j === 0) console.log('[subjects] first card href:', href);
-      html += '<a class="subject-card" href="' + href + '" style="--subject-color:' + color + ';">' +
-        '<div class="code">' + sub.code + '</div>' +
-        '<h3>' + sub.name + '</h3>' +
-        '<div class="meta">' +
-          '<span>' + sub.category + '</span>' +
-          '<span>·</span>' +
-          '<span>' + sub.units.length + ' Units</span>' +
-          '<span>·</span>' +
-          '<span>Credits ' + sub.credits + '</span>' +
-        '</div>' +
-      '</a>';
-    }
-    host.innerHTML = html;
-  }
-
-  render('');
-  if (search) search.addEventListener('input', function (e) { render(e.target.value); });
-}
-
-/* ---------------- SUBJECT DETAIL ---------------- */
 export function renderSubjectDetail(code, mountSelector) {
   var mount = document.querySelector(mountSelector);
-  console.log('[subjects] renderSubjectDetail', code, 'mount:', !!mount);
-
   if (!mount) return;
+
   var s = SUBJECTS[code];
-  if (!s) { mount.innerHTML = '<div class="alert alert-danger">Subject not found.</div>'; return; }
+  if (!s) {
+    mount.innerHTML = '<div class="alert alert-danger">Subject not found.</div>';
+    return;
+  }
 
   var color = SUBJECT_COLORS[code] || '#0a1f4a';
   var notes = (NOTES && NOTES[code]) ? NOTES[code] : [];
   var books = s.resources_books || s.resources || [];
-  var prefix = subjPrefix();
+
+  /* Since subjects live in /subjects/, all links need '../' prefix */
+  var prefix = '../';
 
   var heroHTML = '' +
     '<header class="subject-hero" style="border-top:4px solid ' + color + ';">' +

@@ -1,16 +1,85 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Subjects - SBMP Academic Hub</title>
-<link rel="stylesheet" href="../css/style.css"><link rel="stylesheet" href="../css/themes.css"><link rel="stylesheet" href="../css/responsive.css"><script>(function(){try{var t=localStorage.getItem("sbmp-theme");if(!t){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
+<link rel="icon" href="../assets/logos/sbmp-logo.jpg">
+<link rel="stylesheet" href="../css/style.css"><link rel="stylesheet" href="../css/themes.css"><link rel="stylesheet" href="../css/responsive.css">
+<script>(function(){try{var t=localStorage.getItem("sbmp-theme");if(!t){t=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}document.documentElement.setAttribute("data-theme",t);}catch(e){}})();</script>
 </head><body>
-<div id="site-header"></div><main><div class="container">
+<div id="site-header"></div>
+<main><div class="container">
 <div class="breadcrumbs"><a href="../index.html">Home</a><span class="sep">/</span><span>Subjects</span></div>
 <h1>Subject Directory</h1>
 <p class="lede">All Semester I subjects for Computer Engineering Division B, with full syllabus, course outcomes, resources, and per-subject planners.</p>
-<div style="margin:24px 0;max-width:420px;"><input id="subject-search" placeholder="Search subject name or code..." style="width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--radius);background:var(--surface);color:var(--text);font-family:inherit;font-size:.95rem;"></div>
-<div class="grid grid-3" id="subjects-grid"></div>
-</div></main><div id="site-footer"></div>
+
+<div style="margin:24px 0;max-width:420px;">
+  <input id="subject-search" placeholder="Search subject name or code..." style="width:100%;padding:12px 14px;border:1px solid var(--border-strong);border-radius:var(--radius);background:var(--surface);color:var(--text);font-family:inherit;font-size:.95rem;">
+</div>
+
+<div class="grid grid-3" id="subjects-grid">
+
+  <a class="subject-card" href="../subjects/mathematics.html" style="--subject-color:#0a1f4a;" data-name="Engineering Mathematics emt268901">
+    <div class="code">EMT268901</div>
+    <h3>Engineering Mathematics</h3>
+    <div class="meta"><span>Basic</span><span>·</span><span>5 Units</span><span>·</span><span>Credits 3</span></div>
+  </a>
+
+  <a class="subject-card" href="../subjects/applied-science.html" style="--subject-color:#0f766e;" data-name="Applied Science asc268902">
+    <div class="code">ASC268902</div>
+    <h3>Applied Science</h3>
+    <div class="meta"><span>DSC</span><span>·</span><span>6 Units</span><span>·</span><span>Credits 3</span></div>
+  </a>
+
+  <a class="subject-card" href="../subjects/communication-skills.html" style="--subject-color:#b45309;" data-name="Communication Skills cms268903">
+    <div class="code">CMS268903</div>
+    <h3>Communication Skills</h3>
+    <div class="meta"><span>AEC</span><span>·</span><span>6 Units</span><span>·</span><span>Credits 3</span></div>
+  </a>
+
+  <a class="subject-card" href="../subjects/engineering-graphics.html" style="--subject-color:#6d28d9;" data-name="Engineering Graphics eng268904">
+    <div class="code">ENG268904</div>
+    <h3>Engineering Graphics</h3>
+    <div class="meta"><span>DSC</span><span>·</span><span>5 Units</span><span>·</span><span>Credits 2</span></div>
+  </a>
+
+  <a class="subject-card" href="../subjects/fundamentals-of-computing.html" style="--subject-color:#0369a1;" data-name="Fundamentals of Computing System fcs260801">
+    <div class="code">FCS260801</div>
+    <h3>Fundamentals of Computing System</h3>
+    <div class="meta"><span>SEC</span><span>·</span><span>5 Units</span><span>·</span><span>Credits 3</span></div>
+  </a>
+
+  <a class="subject-card" href="../subjects/universal-human-values.html" style="--subject-color:#be123c;" data-name="Universal Human Values uhv268905">
+    <div class="code">UHV268905</div>
+    <h3>Universal Human Values</h3>
+    <div class="meta"><span>VEC</span><span>·</span><span>6 Units</span><span>·</span><span>Credits 2</span></div>
+  </a>
+
+  <a class="subject-card" href="../subjects/website-designing.html" style="--subject-color:#0f766e;" data-name="Website Designing wsd260802">
+    <div class="code">WSD260802</div>
+    <h3>Website Designing</h3>
+    <div class="meta"><span>SEC</span><span>·</span><span>6 Units</span><span>·</span><span>Credits 4</span></div>
+  </a>
+
+</div>
+</div></main>
+<div id="site-footer"></div>
 <script type="module">
 import './../js/main.js';
-import { initSubjectDirectory } from './../js/subjects.js';
-initSubjectDirectory();
-</script></body></html>
+
+/* Simple live search — filters the hardcoded cards */
+var cards = document.querySelectorAll('#subjects-grid .subject-card');
+var searchBox = document.getElementById('subject-search');
+if (searchBox) {
+  searchBox.addEventListener('input', function (e) {
+    var q = e.target.value.toLowerCase().trim();
+    for (var i = 0; i < cards.length; i++) {
+      var card = cards[i];
+      var text = card.getAttribute('data-name') || '';
+      if (q === '' || text.indexOf(q) > -1) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    }
+  });
+}
+</script>
+</body></html>
